@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,5 +24,20 @@ namespace SlickTicket.Models
 
        [NotMapped]
         public string FullName { get { return $"{FirstName} {LastName}"; } }
+
+        [NotMapped]
+        [DataType(DataType.Upload)]
+        //[MaxFileSize(1024 * 1024)]
+        //[AllowedExtensions(new string[] { ".jpg", ".png" })]
+        public IFormFile AvatarFormFile { get; set; }
+        public string AvatarFileNAme { get; set; }
+        public byte[] AvatarFileData { get; set; }
+        [Display(Name = "File Extension")]
+        public string AvatarContentType { get; set; }
+        public int? CompanyId { get; set; }
+
+        // -- Navigational Properties -- //
+        public virtual Company Company { get; set; }
+        public virtual ICollection<Project> Projects { get; set; }
     }
 }

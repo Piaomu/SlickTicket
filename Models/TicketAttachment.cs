@@ -12,9 +12,12 @@ namespace SlickTicket.Models
     public class TicketAttachment
     {
         public int Id { get; set; }
+        [DisplayName("File Description")]
         public string Description { get; set; }
         public DateTimeOffset Created { get; set; }
+        [DisplayName("Ticket")]
         public int TicketId { get; set; }
+        [DisplayName("Team Member")]
         public string UserId { get; set; }
 
         [NotMapped]
