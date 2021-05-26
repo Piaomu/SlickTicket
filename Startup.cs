@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SlickTicket.Data;
 using SlickTicket.Models;
+using SlickTicket.Services;
+using SlickTicket.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +42,9 @@ namespace SlickTicket
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMvc();
+
+            services.AddScoped<IBTRolesService, BTRolesService>();
+
 
         }
 
