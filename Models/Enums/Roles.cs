@@ -11,6 +11,7 @@ namespace SlickTicket.Models.Enums
         ProjectManager,
         Developer,
         Submitter,
+        NewUser,
         DemoUser
     }
 }

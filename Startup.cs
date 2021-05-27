@@ -31,8 +31,7 @@ namespace SlickTicket
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                   options.UseNpgsql(DataUtility.GetConnectionString(Configuration)));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -44,6 +43,7 @@ namespace SlickTicket
             services.AddMvc();
 
             services.AddScoped<IBTRolesService, BTRolesService>();
+            
 
 
         }

@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
 using SlickTicket.Models;
+using SlickTicket.Models.Enums;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -83,7 +86,7 @@ namespace SlickTicket.Data
         public static async Task SeedRolesAsync(UserManager<BTUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             //Seed Roles
-            await roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
+            await roleManager.CreateAsync(new IdentityRole(Roles.Administrator.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.ProjectManager.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Developer.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Submitter.ToString()));
@@ -105,18 +108,18 @@ namespace SlickTicket.Data
                     new Company() { Name = "Company7", Description="This is default Company 7" }
                 };
 
-                var dbCompanies = context.Companies.Select(c => c.Name).ToList();
-                await context.Companies.AddRangeAsync(defaultcompanies.Where(c => !dbCompanies.Contains(c.Name)));
+                var dbCompanies = context.Company.Select(c => c.Name).ToList();
+                await context.Company.AddRangeAsync(defaultcompanies.Where(c => !dbCompanies.Contains(c.Name)));
                 context.SaveChanges();
 
                 //Get company Ids
-                company1Id = context.Companies.FirstOrDefault(p => p.Name == "Company1").Id;
-                company2Id = context.Companies.FirstOrDefault(p => p.Name == "Company2").Id;
-                company3Id = context.Companies.FirstOrDefault(p => p.Name == "Company3").Id;
-                company4Id = context.Companies.FirstOrDefault(p => p.Name == "Company4").Id;
-                company5Id = context.Companies.FirstOrDefault(p => p.Name == "Company5").Id;
-                company6Id = context.Companies.FirstOrDefault(p => p.Name == "Company6").Id;
-                company7Id = context.Companies.FirstOrDefault(p => p.Name == "Company7").Id;
+                company1Id = context.Company.FirstOrDefault(p => p.Name == "Company1").Id;
+                company2Id = context.Company.FirstOrDefault(p => p.Name == "Company2").Id;
+                company3Id = context.Company.FirstOrDefault(p => p.Name == "Company3").Id;
+                company4Id = context.Company.FirstOrDefault(p => p.Name == "Company4").Id;
+                company5Id = context.Company.FirstOrDefault(p => p.Name == "Company5").Id;
+                company6Id = context.Company.FirstOrDefault(p => p.Name == "Company6").Id;
+                company7Id = context.Company.FirstOrDefault(p => p.Name == "Company7").Id;
 
             }
             catch (Exception ex)
@@ -140,8 +143,8 @@ namespace SlickTicket.Data
                                                     new ProjectPriority() { Name = "Urgent" },
                 };
 
-                var dbProjectPriorities = context.ProjectPriorities.Select(c => c.Name).ToList();
-                await context.ProjectPriorities.AddRangeAsync(projectPriorities.Where(c => !dbProjectPriorities.Contains(c.Name)));
+                var dbProjectPriorities = context.ProjectPriority.Select(c => c.Name).ToList();
+                await context.ProjectPriority.AddRangeAsync(projectPriorities.Where(c => !dbProjectPriorities.Contains(c.Name)));
                 context.SaveChanges();
 
             }
@@ -159,10 +162,10 @@ namespace SlickTicket.Data
         {
 
             //Get project priority Ids
-            int priorityLow = context.ProjectPriorities.FirstOrDefault(p => p.Name == "Low").Id;
-            int priorityMedium = context.ProjectPriorities.FirstOrDefault(p => p.Name == "Medium").Id;
-            int priorityHigh = context.ProjectPriorities.FirstOrDefault(p => p.Name == "High").Id;
-            int priorityUrgent = context.ProjectPriorities.FirstOrDefault(p => p.Name == "Urgent").Id;
+            int priorityLow = context.ProjectPriority.FirstOrDefault(p => p.Name == "Low").Id;
+            int priorityMedium = context.ProjectPriority.FirstOrDefault(p => p.Name == "Medium").Id;
+            int priorityHigh = context.ProjectPriority.FirstOrDefault(p => p.Name == "High").Id;
+            int priorityUrgent = context.ProjectPriority.FirstOrDefault(p => p.Name == "Urgent").Id;
 
             try
             {
@@ -214,8 +217,8 @@ namespace SlickTicket.Data
                      }
                 };
 
-                var dbProjects = context.Projects.Select(c => c.Name).ToList();
-                await context.Projects.AddRangeAsync(projects.Where(c => !dbProjects.Contains(c.Name)));
+                var dbProjects = context.Project.Select(c => c.Name).ToList();
+                await context.Project.AddRangeAsync(projects.Where(c => !dbProjects.Contains(c.Name)));
                 context.SaveChanges();
             }
             catch (Exception ex)
@@ -233,10 +236,10 @@ namespace SlickTicket.Data
             //Seed Default Admin User
             var defaultUser = new BTUser
             {
-                UserName = "araynor@coderfoundry.com",
-                Email = "araynor@coderfoundry.com",
-                FirstName = "Antonio",
-                LastName = "Raynor",
+                UserName = "driftwood.wahl@gmail.com",
+                Email = "driftwood.wahl@gmail.com",
+                FirstName = "Kasey",
+                LastName = "Wahl",
                 EmailConfirmed = true,
                 CompanyId = company3Id
             };
@@ -246,7 +249,7 @@ namespace SlickTicket.Data
                 if (user == null)
                 {
                     await userManager.CreateAsync(defaultUser, "Abc&123!");
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.Administrator.ToString());
                 }
             }
             catch (Exception ex)
@@ -539,7 +542,7 @@ namespace SlickTicket.Data
                 if (user == null)
                 {
                     await userManager.CreateAsync(defaultUser, "Abc&123!");
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.Administrator.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
 
                 }
@@ -685,8 +688,8 @@ namespace SlickTicket.Data
                      new TicketType() { Name = "Maintenance" },
                 };
 
-                var dbTicketTypes = context.TicketTypes.Select(c => c.Name).ToList();
-                await context.TicketTypes.AddRangeAsync(ticketTypes.Where(c => !dbTicketTypes.Contains(c.Name)));
+                var dbTicketTypes = context.TicketType.Select(c => c.Name).ToList();
+                await context.TicketType.AddRangeAsync(ticketTypes.Where(c => !dbTicketTypes.Contains(c.Name)));
                 context.SaveChanges();
 
             }
@@ -739,8 +742,8 @@ namespace SlickTicket.Data
                                                     new TicketPriority() { Name = "Urgent" },
                 };
 
-                var dbTicketPriorities = context.TicketPriorities.Select(c => c.Name).ToList();
-                await context.TicketPriorities.AddRangeAsync(ticketPriorities.Where(c => !dbTicketPriorities.Contains(c.Name)));
+                var dbTicketPriorities = context.TicketPriority.Select(c => c.Name).ToList();
+                await context.TicketPriority.AddRangeAsync(ticketPriorities.Where(c => !dbTicketPriorities.Contains(c.Name)));
                 context.SaveChanges();
 
             }
@@ -757,21 +760,21 @@ namespace SlickTicket.Data
         public static async Task SeedDefautTicketsAsync(ApplicationDbContext context)
         {
             //Get project Ids
-            int portfolioId = context.Projects.FirstOrDefault(p => p.Name == "Build a Personal Porfolio").Id;
-            int blogId = context.Projects.FirstOrDefault(p => p.Name == "Build a supplemental Blog Web Application").Id;
-            int bugtrackerId = context.Projects.FirstOrDefault(p => p.Name == "Build an Issue Tracking Web Application").Id;
+            int portfolioId = context.Project.FirstOrDefault(p => p.Name == "Build a Personal Porfolio").Id;
+            int blogId = context.Project.FirstOrDefault(p => p.Name == "Build a supplemental Blog Web Application").Id;
+            int bugtrackerId = context.Project.FirstOrDefault(p => p.Name == "Build an Issue Tracking Web Application").Id;
 
             //Get ticket type Ids
-            int typeNewDev = context.TicketTypes.FirstOrDefault(p => p.Name == "New Development").Id;
-            int typeRuntime = context.TicketTypes.FirstOrDefault(p => p.Name == "Runtime").Id;
-            int typeUI = context.TicketTypes.FirstOrDefault(p => p.Name == "UI").Id;
-            int typeMaintenance = context.TicketTypes.FirstOrDefault(p => p.Name == "Maintenance").Id;
+            int typeNewDev = context.TicketType.FirstOrDefault(p => p.Name == "New Development").Id;
+            int typeRuntime = context.TicketType.FirstOrDefault(p => p.Name == "Runtime").Id;
+            int typeUI = context.TicketType.FirstOrDefault(p => p.Name == "UI").Id;
+            int typeMaintenance = context.TicketType.FirstOrDefault(p => p.Name == "Maintenance").Id;
 
             //Get ticket priority Ids
-            int priorityLow = context.TicketPriorities.FirstOrDefault(p => p.Name == "Low").Id;
-            int priorityMedium = context.TicketPriorities.FirstOrDefault(p => p.Name == "Medium").Id;
-            int priorityHigh = context.TicketPriorities.FirstOrDefault(p => p.Name == "High").Id;
-            int priorityUrgent = context.TicketPriorities.FirstOrDefault(p => p.Name == "Urgent").Id;
+            int priorityLow = context.TicketPriority.FirstOrDefault(p => p.Name == "Low").Id;
+            int priorityMedium = context.TicketPriority.FirstOrDefault(p => p.Name == "Medium").Id;
+            int priorityHigh = context.TicketPriority.FirstOrDefault(p => p.Name == "High").Id;
+            int priorityUrgent = context.TicketPriority.FirstOrDefault(p => p.Name == "Urgent").Id;
 
             //Get ticket status Ids
             int statusNew = context.TicketStatus.FirstOrDefault(p => p.Name == "New").Id;
@@ -844,8 +847,8 @@ namespace SlickTicket.Data
                 };
 
 
-                var dbTickets = context.Tickets.Select(c => c.Title).ToList();
-                await context.Tickets.AddRangeAsync(tickets.Where(c => !dbTickets.Contains(c.Title)));
+                var dbTickets = context.Ticket.Select(c => c.Title).ToList();
+                await context.Ticket.AddRangeAsync(tickets.Where(c => !dbTickets.Contains(c.Title)));
                 context.SaveChanges();
             }
             catch (Exception ex)
