@@ -55,10 +55,10 @@ namespace SlickTicket.Services
 
         }
 
-        public async Task<bool> RemoveUserFromRolesAsync(BTUser user, IEnumerable<string> roleName)
+        public async Task<bool> RemoveUserFromRolesAsync(BTUser user, IEnumerable<string> roles)
         {
             // So this can work as a boolean even if the task is technically IdentityResult?
-            bool result = (await _userManager.RemoveFromRolesAsync(user, roleName)).Succeeded;
+            bool result = (await _userManager.RemoveFromRolesAsync(user, roles)).Succeeded;
             return result;
         }
 

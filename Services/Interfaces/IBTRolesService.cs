@@ -17,7 +17,7 @@ namespace SlickTicket.Services.Interfaces
         public Task<bool> AddUserToRoleAsync(BTUser user, string roleName);
 
         public Task<bool> RemoveUserFromRoleAsync(BTUser user, string roleName);
-        public Task<bool> RemoveUserFromRolesAsync(BTUser user, IEnumerable<string> roleName);
+        public Task<bool> RemoveUserFromRolesAsync(BTUser user, IEnumerable<string> roles);
 
         public Task<List<BTUser>> UsersNotInRoleAsync(string roleName);
     }

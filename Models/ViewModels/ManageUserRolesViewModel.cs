@@ -8,7 +8,7 @@ namespace SlickTicket.Models.ViewModels
 {
     public class ManageUserRolesViewModel
     {
-        public BTUser BTUser { get; set; }
+        public BTUser BTUser { get; set; } = new(); // (optional fix)
         public MultiSelectList Roles { get; set; }
         public List<string> SelectedRoles { get; set; }
     }

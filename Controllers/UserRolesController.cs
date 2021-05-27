@@ -19,14 +19,11 @@ namespace SlickTicket.Controllers
     public class UserRolesController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<BTUser> _userManager;
         private readonly IBTRolesService _rolesService;
         public UserRolesController(ApplicationDbContext context,
-            UserManager<BTUser> userManager,
             IBTRolesService rolesService)
         {
             _context = context;
-            _userManager = userManager;
             _rolesService = rolesService;
         }
 
@@ -57,7 +54,7 @@ namespace SlickTicket.Controllers
             BTUser user = _context.Users.Find(member.BTUser.Id);
 
             IEnumerable<string> roles = await _rolesService.ListUserRolesAsync(user);
-            //Homework I DID IT!
+            
             await _rolesService.RemoveUserFromRolesAsync(user, roles);
             string userRole = member.SelectedRoles.FirstOrDefault();
 
