@@ -32,7 +32,7 @@ namespace SlickTicket.Controllers
         {
             List<ManageUserRolesViewModel> model = new();
 
-            //TODO: Company Users
+            //TODO: CompanyUsers...little more work to do
             List<BTUser> users = _context.Users.ToList();
 
             foreach (var user in users)
