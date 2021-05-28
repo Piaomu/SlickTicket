@@ -81,15 +81,21 @@ namespace SlickTicket.Services
 
         public async Task RemoveUserFromProjectAsync(string userId, int projectId)
         {
-            //WRITE THIS SECOND
             try
             {
-                List<BTUser> members = await GetProjectMembersByRoleAsync(projectId, role);
+                BTUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
                 Project project = await _context.Project.FirstOrDefaultAsync(p => p.Id == projectId);
+
+                    project.Members.Remove(user);
+                    await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
-        public async Task RemoveUsersFromProjectByRoleAsync(string userId, int projectId)
+        public async Task RemoveUsersFromProjectByRoleAsync(string role, int projectId)
         {
             try
             {
@@ -197,18 +203,32 @@ namespace SlickTicket.Services
         {
             List<Project> projects = new();
 
-            projects = await GetAllProjectsByCompany(companyId)
-                             .Where(p => p.ProjectPriority == priorityName).ToListAsync();
+            projects = await GetAllProjectsByCompany(companyId);
+            List<Project> prioritizedProjects = projects.Where(p => p.ProjectPriority.Name == priorityName).ToList();
+                             
 
             return projects;
         }
         
         public async Task<List<BTUser>> GetProjectMembersByRoleAsync(int projectId, string role)
-        { //WRITE THIS FIRST
+        { 
+            //Get the project and members from the Db
             Project project = await _context.Project
                               .Include(p => p.Members)
                               .FirstOrDefaultAsync(m => m.Id == projectId);
-            
+
+            List<BTUser> users = new();
+            //loop through the members and add them to project by passing in role. 
+            foreach(BTUser user in project.Members)
+            {
+                if(await _roleService.IsUserInRoleAsync(user, role))
+                {
+                    users.Add(user);
+                }
+            }
+            //List<BTUser> users = await _context.Users.Where(u => u.Projects.All(p => p.Id == projectId);
+
+            return users;
         }
 
         public async Task<BTUser> GetProjectManagerAsync(int projectId)
@@ -228,12 +248,55 @@ namespace SlickTicket.Services
 
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
         {
+            BTUser pm = await GetProjectManagerAsync(projectId);
 
+            try
+            {
+                if(pm is not null)
+                {
+                    await RemoveProjectManagerAsync(projectId);
+                }
+
+            }
+            catch
+            {
+                throw;
+            }
+            try
+            {
+                await AddUserToProjectAsync(userId, projectId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task RemoveProjectManagerAsync(int projectId)
         {
+            BTUser pm = await GetProjectManagerAsync(projectId);
 
+            Project project = await _context.Project
+                              .Include(p => p.Members)
+                              .FirstOrDefaultAsync(u => u.Id == projectId);
+            try {
+            if (pm is not null)
+            {
+                foreach (BTUser member in project.Members)
+                {
+
+                    if(await _roleService.IsUserInRoleAsync(member, "ProjectManager"))
+                    {
+                        await RemoveUserFromProjectAsync(member.Id, projectId);
+                    }
+                }    
+            }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task<List<BTUser>> GetMembersWithoutPMAsync(int projectId)
