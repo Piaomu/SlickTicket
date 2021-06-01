@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using SlickTicket.Data;
 using SlickTicket.Models;
 using SlickTicket.Services;
+using SlickTicket.Services.Factories;
 using SlickTicket.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,8 @@ namespace SlickTicket
             services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddDefaultUI()
                 .AddDefaultTokenProviders()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddClaimsPrincipalFactory<BTUserClaimsPrincipalFactory>();
 
             services.AddMvc();
 

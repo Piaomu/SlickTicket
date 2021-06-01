@@ -6,17 +6,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SlickTicket.Data;
+using SlickTicket.Extensions;
 using SlickTicket.Models;
+using SlickTicket.Models.ViewModels;
+using SlickTicket.Services.Interfaces;
 
 namespace SlickTicket.Controllers
 {
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTProjectService _projectService;
 
-        public ProjectsController(ApplicationDbContext context)
+        public ProjectsController(ApplicationDbContext context,
+                                  IBTProjectService projectService)
         {
             _context = context;
+            _projectService = projectService;
         }
 
         // GET: Projects
@@ -127,6 +133,25 @@ namespace SlickTicket.Controllers
             return View(project);
         }
 
+
+        //Authorize Roles, Administrator, ProjectManager
+        [HttpGet]
+        public async Task<IActionResult> AssignUsers(int id)
+        {
+            ProjectMembersViewModel model = new();
+
+            //get companyId
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            Project project = (await _projectService.GetAllProjectsByCompany())
+                                     .FirstOrDefaultAsync(p => p.Id == id);
+
+            model.Project = project;
+            List<BTUser> users = await _context.Users.ToListAsync();
+            List<BTUser> members = (List<BTUser>)await _projectService.UsersOnProjectAsync(id);
+            model.Users = new MultiSelectList(users, "Id", "FullName", members);
+            return View(model);
+        }
         // GET: Projects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

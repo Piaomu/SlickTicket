@@ -20,6 +20,12 @@ namespace SlickTicket.Services.Interfaces
 
         Task<List<Ticket>> GetAllTicketsByStatusAsync(int companyId, string statusName);
 
+        Task<List<Ticket>> GetProjectTicketsByStatusAsync(string statusName, int companyId, int projectId);
+
+        Task<List<Ticket>> GetProjectTicketsByPriorityAsync(string priorityName, int companyId, int projectId);
+
+        Task<List<Ticket>> GetProjectTicketsByTypeAsync(string typeName, int companyId, int projectId);
+
         Task<List<Ticket>> GetAllTicketsByTypeAsync(int companyId, string typeName);
 
         Task<List<Ticket>> GetAllPMTicketsAsync(string userId);
