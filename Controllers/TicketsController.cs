@@ -6,17 +6,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SlickTicket.Data;
+using SlickTicket.Extensions;
 using SlickTicket.Models;
+using SlickTicket.Services;
+using SlickTicket.Services.Interfaces;
 
 namespace SlickTicket.Controllers
 {
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTTicketService _ticketService;
 
-        public TicketsController(ApplicationDbContext context)
+        public TicketsController(ApplicationDbContext context, IBTTicketService ticketService)
         {
             _context = context;
+            _ticketService = ticketService;
         }
 
         // GET: Tickets
@@ -154,6 +159,30 @@ namespace SlickTicket.Controllers
             ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Id", ticket.TicketTypeId);
             return View(ticket);
         }
+
+        //[HttpGet]
+        //public async Task<IActionResult> MyTickets(int id)
+        //{
+
+        //    //get companyId
+        //    int companyId = User.Identity.GetCompanyId().Value;
+        //    int myId = _userManager
+
+        //    var tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+        //    var model = await _ticketService.GetTicketDeveloperAsync(myId);
+        //}
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> CompanyTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            var model = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+            return View(model);
+        }
+
 
         // GET: Tickets/Delete/5
         public async Task<IActionResult> Delete(int? id)
