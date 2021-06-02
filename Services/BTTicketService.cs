@@ -35,8 +35,9 @@ namespace SlickTicket.Services
                     ticket.DeveloperUserId = userId;
                     await _context.SaveChangesAsync();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Debug.WriteLine($"*** ERROR *** - Error assigning ticket - { ex.Message}");
                     throw;
                 }
             }
@@ -51,8 +52,9 @@ namespace SlickTicket.Services
 
                 return tickets;
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine($"*** ERROR *** - Error getting Project Manager tickets - { ex.Message}");
                 throw;
             }
         }
@@ -76,8 +78,9 @@ namespace SlickTicket.Services
                                                 .ToListAsync();
                 return tickets;
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine($"*** ERROR *** - Error getting company tickets - { ex.Message}");
                 throw;
             }
         }
@@ -117,7 +120,7 @@ namespace SlickTicket.Services
                                 .Include(t => t.Project)
                                     .ThenInclude(p => p.Members)
                                 .Include(t => t.Project)
-                                    .ThenInclude(p => p.ProjectPriority).Where(t => t.DeveloperUserId == userId).ToListAsync()
+                                    .ThenInclude(p => p.ProjectPriority).Where(t => t.DeveloperUserId == userId).ToListAsync();
             }
             else if (string.Compare(role, Roles.Submitter.ToString()) == 0)
             {
@@ -163,11 +166,19 @@ namespace SlickTicket.Services
         public async Task<List<Ticket>> GetProjectTicketsByStatusAsync(string statusName, int companyId, int projectId)
         {
             List<Ticket> tickets = new();
+            try
+            {
+                tickets = (await GetAllTicketsByStatusAsync(companyId, statusName))
+           .Where(t => t.ProjectId == projectId).ToList();
 
-            tickets = (await GetAllTicketsByStatusAsync(companyId, statusName))
-                       .Where(t => t.ProjectId == projectId).ToList();
+                return tickets;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"*** ERROR *** - Error getting tickets - { ex.Message}");
+                throw;
+            }
 
-            return tickets;
         }
 
         public async Task<List<Ticket>> GetProjectTicketsByPriorityAsync(string priorityName, int companyId, int projectId)
@@ -178,26 +189,45 @@ namespace SlickTicket.Services
 
             try
             {
-                tickets = (await _context.Project.Where(p => p.CompanyId == companyId)
-                    .SelectMany(p => p.Tickets)
-                        .Include
+                tickets = (await GetAllTicketsByPriorityAsync(companyId, priorityName))
+                            .Where(t => t.ProjectId == projectId).ToList();
+
+                return tickets;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"*** ERROR *** - Error getting project tickets - { ex.Message}");
+                throw;
             }
 
-            return tickets;
+
         }
 
         public async Task<List<Ticket>> GetProjectTicketsByTypeAsync(string typeName, int companyId, int projectId)
         {
             List<Ticket> tickets = new();
 
-            tickets = (await GetAllTicketsByStatusAsync(companyId, typeName))
+            tickets = (await GetAllTicketsByTypeAsync(companyId, typeName))
                        .Where(t => t.ProjectId == projectId).ToList();
 
             return tickets;
         }
-        public Task<List<Ticket>> GetAllTicketsByTypeAsync(int companyId, string typeName)
+        public async Task<List<Ticket>> GetAllTicketsByTypeAsync(int companyId, string typeName)
         {
-            throw new NotImplementedException();
+            int type = (await LookupTicketTypeIdAsync(typeName)).Value;
+
+            return await _context.Project.Where(p => p.CompanyId == companyId)
+                                            .SelectMany(p => p.Tickets)
+                                                .Include(t => t.Attachments)
+                                                .Include(t => t.Comments)
+                                                .Include(t => t.History)
+                                                .Include(t => t.DeveloperUser)
+                                                .Include(t => t.OwnerUser)
+                                                .Include(t => t.TicketPriority)
+                                                .Include(t => t.TicketStatus)
+                                                .Include(t => t.TicketType)
+                                                .Include(t => t.Project)
+                                            .Where(t => t.TicketTypeId == type).ToListAsync();
         }
 
         public async Task<List<Ticket>> GetArchivedTicketsByCompanyAsync(int companyId)
@@ -220,8 +250,9 @@ namespace SlickTicket.Services
                                                 .ToListAsync();
                 return tickets;
             }
-            catch
+            catch(Exception ex)
             {
+                Debug.WriteLine($"*** ERROR *** - Error getting Archived tickets - { ex.Message}");
                 throw;
             }
         }
