@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using SlickTicket.Data;
 using SlickTicket.Extensions;
 using SlickTicket.Models;
+using SlickTicket.Models.Enums;
 using SlickTicket.Models.ViewModels;
 using SlickTicket.Services.Interfaces;
 
@@ -17,12 +18,15 @@ namespace SlickTicket.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IBTProjectService _projectService;
+        private readonly IBTCompanyInfoService _infoService;
 
         public ProjectsController(ApplicationDbContext context,
-                                  IBTProjectService projectService)
+                                  IBTProjectService projectService,
+                                  IBTCompanyInfoService infoService)
         {
             _context = context;
             _projectService = projectService;
+            _infoService = infoService;
         }
 
         // GET: Projects
@@ -41,6 +45,7 @@ namespace SlickTicket.Controllers
             }
 
             var project = await _context.Project
+                .Include(p => p.Members)
                 .Include(p => p.Company)
                 .Include(p => p.ProjectPriority)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -143,15 +148,50 @@ namespace SlickTicket.Controllers
             //get companyId
             int companyId = User.Identity.GetCompanyId().Value;
 
-            Project project = (await _projectService.GetAllProjectsByCompany())
-                                     .FirstOrDefaultAsync(p => p.Id == id);
+            Project project = (await _projectService.GetAllProjectsByCompany(companyId))
+                                     .FirstOrDefault(p => p.Id == id);
 
             model.Project = project;
-            List<BTUser> users = await _context.Users.ToListAsync();
-            List<BTUser> members = (List<BTUser>)await _projectService.UsersOnProjectAsync(id);
+            List<BTUser> developers = await _infoService.GetMembersInRoleAsync(Roles.Developer.ToString(), companyId);
+            List<BTUser> submitters = await _infoService.GetMembersInRoleAsync(Roles.Submitter.ToString(), companyId);
+            List<BTUser> users = developers.Concat(submitters).ToList();
+            List<string> members = project.Members.Select(m => m.Id).ToList();
             model.Users = new MultiSelectList(users, "Id", "FullName", members);
             return View(model);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignUsers(ProjectMembersViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.SelectedUsers != null)
+                {
+                    List<string> memberIds = (await _projectService.GetMembersWithoutPMAsync(model.Project.Id))
+                                                                    .Select(m => m.Id).ToList();
+
+                    foreach (string id in memberIds)
+                    {
+                        await _projectService.RemoveUserFromProjectAsync(id, model.Project.Id);
+                    }
+                    foreach (string id in model.SelectedUsers)
+                    {
+                        await _projectService.AddUserToProjectAsync(id, model.Project.Id);
+                    }
+                    return RedirectToAction("Details", "Projects", new { id = model.Project.Id });
+                }
+                else
+                {
+                    // send an error message back
+                    //Use a sweet alert or something that works in the template and return it in the view.
+                }
+            }
+            return View(model);
+        }
+
+
+
         // GET: Projects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
