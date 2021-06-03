@@ -43,27 +43,32 @@ namespace SlickTicket.Controllers
         }
 
         // GET: Tickets/Details/5
-        public async Task<IActionResult> Details(int? companyId)
+        public async Task<IActionResult> Details(int? id)
         {
-            if (companyId == null)
+
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var ticket = await _ticketService.GetAllTicketsByCompanyAsync((int)companyId);
-                //await _context.Ticket
-                //.Include(t => t.DeveloperUser)
-                //.Include(t => t.OwnerUser)
-                //.Include(t => t.Project)
-                //.Include(t => t.TicketPriority)
-                //.Include(t => t.TicketStatus)
-                //.Include(t => t.TicketType)
-                //.Include(t => t.Attachments)
-                //.Include(t => t.History)
-                //.Include(t => t.Comments)
-                //.Include(t => t.Notifications)
-                //.Include(t => t.Description)
-                //.FirstOrDefaultAsync(m => m.Id == id);
+            var ticket = /*await _ticketService.GetAllTicketsByCompanyAsync(Id);*/
+                await _context.Ticket
+                .Include(t => t.DeveloperUser)
+                .Include(t => t.OwnerUser)
+                .Include(t => t.Project)
+                .Include(t => t.TicketPriority)
+                .Include(t => t.TicketStatus)
+                .Include(t => t.TicketType)
+                .Include(t => t.Attachments)
+                .Include(t => t.History)
+                .Include(t => t.Comments)
+                .Include(t => t.Notifications)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name", ticket.TicketTypeId);
+
             if (ticket == null)
             {
                 return NotFound();
