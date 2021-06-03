@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +18,13 @@ namespace SlickTicket.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IBTTicketService _ticketService;
+        private readonly UserManager<BTUser> _userManager;
 
-        public TicketsController(ApplicationDbContext context, IBTTicketService ticketService)
+        public TicketsController(ApplicationDbContext context, IBTTicketService ticketService, UserManager<BTUser> userManager)
         {
             _context = context;
             _ticketService = ticketService;
+            _userManager = userManager;
         }
 
         // GET: Tickets
@@ -40,21 +43,27 @@ namespace SlickTicket.Controllers
         }
 
         // GET: Tickets/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? companyId)
         {
-            if (id == null)
+            if (companyId == null)
             {
                 return NotFound();
             }
 
-            var ticket = await _context.Ticket
-                .Include(t => t.DeveloperUser)
-                .Include(t => t.OwnerUser)
-                .Include(t => t.Project)
-                .Include(t => t.TicketPriority)
-                .Include(t => t.TicketStatus)
-                .Include(t => t.TicketType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var ticket = await _ticketService.GetAllTicketsByCompanyAsync((int)companyId);
+                //await _context.Ticket
+                //.Include(t => t.DeveloperUser)
+                //.Include(t => t.OwnerUser)
+                //.Include(t => t.Project)
+                //.Include(t => t.TicketPriority)
+                //.Include(t => t.TicketStatus)
+                //.Include(t => t.TicketType)
+                //.Include(t => t.Attachments)
+                //.Include(t => t.History)
+                //.Include(t => t.Comments)
+                //.Include(t => t.Notifications)
+                //.Include(t => t.Description)
+                //.FirstOrDefaultAsync(m => m.Id == id);
             if (ticket == null)
             {
                 return NotFound();
@@ -69,9 +78,9 @@ namespace SlickTicket.Controllers
             ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
-            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Id");
-            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Id");
-            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Id");
+            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name");
+            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name");
+            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name");
             return View();
         }
 
@@ -160,19 +169,21 @@ namespace SlickTicket.Controllers
             return View(ticket);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> MyTickets(int id)
-        //{
+        [HttpGet]
+        public async Task<IActionResult> MyTickets()
+        {
+            string myId = (await _userManager.GetUserAsync(User)).Id;
+            //get companyId
+            int companyId = User.Identity.GetCompanyId().Value;
 
-        //    //get companyId
-        //    int companyId = User.Identity.GetCompanyId().Value;
-        //    int myId = _userManager
+            var tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
 
-        //    var tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
-        //    var model = await _ticketService.GetTicketDeveloperAsync(myId);
-        //}
+            var model = tickets.Where(t => t.OwnerUser.Id == myId);
+
+            return View(model);
 
 
+        }
 
         [HttpGet]
         public async Task<IActionResult> CompanyTickets()
