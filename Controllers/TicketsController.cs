@@ -54,7 +54,7 @@ namespace SlickTicket.Controllers
             }
 
             var companyId = User.Identity.GetCompanyId().Value;
-            var model = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+            Ticket model = (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).FirstOrDefault(t => t.Id == id);
             //await _context.Ticket
             //    .Include(t => t.DeveloperUser)
             //    .Include(t => t.OwnerUser)
@@ -80,7 +80,7 @@ namespace SlickTicket.Controllers
         public async Task<IActionResult> Create()
         {
             //get current user
-            BTUser btUser =await _userManager.GetUserAsync(User);
+            BTUser btUser = await _userManager.GetUserAsync(User);
 
             //get current user's company Id
             int companyId = User.Identity.GetCompanyId().Value;
@@ -198,7 +198,7 @@ namespace SlickTicket.Controllers
 
             var tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
 
-            var model = tickets.Where(t => t.OwnerUser.Id == myId);
+            var model = tickets.Where(t => t.OwnerUserId == myId);
 
             return View(model);
 
