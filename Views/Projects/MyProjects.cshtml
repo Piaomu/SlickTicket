@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<SlickTicket.Models.Project>
+
 @{
-    ViewData["Title"] = "Company Projects";
+    ViewData["Title"] = "Details";
 }
 
-<h1>Company Projects</h1>
+<h1>My Projects</h1>
 
 <div>
     <hr />
@@ -51,9 +52,9 @@
                                     <td>@Html.DisplayFor(model => project.Archived)</td>
                                     @foreach (var member in project.Members)
                                     {
-                                    <td>@member.FullName</td>
+                                        <td>@member.FullName</td>
                                     }
-                                <td>Project McManager</td>
+                                    <td>Project McManager</td>
                                 </tr>
                             }
                         </tbody>

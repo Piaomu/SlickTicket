@@ -38,9 +38,6 @@ namespace SlickTicket.Models
         [DisplayName("Project")]
         public int ProjectId { get; set; }
 
-        [DisplayName("Status")]
-        public int StatusId { get; set; }
-
         [DisplayName("Ticket Type")]
         public int TicketTypeId { get; set; }
 

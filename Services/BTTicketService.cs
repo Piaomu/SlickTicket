@@ -160,7 +160,7 @@ namespace SlickTicket.Services
                                                 .Include(t => t.TicketStatus)
                                                 .Include(t => t.TicketType)
                                                 .Include(t => t.Project)
-                                            .Where(t => t.StatusId == status).ToListAsync();
+                                            .Where(t => t.TicketStatusId == status).ToListAsync();
         }
 
         public async Task<List<Ticket>> GetProjectTicketsByStatusAsync(string statusName, int companyId, int projectId)

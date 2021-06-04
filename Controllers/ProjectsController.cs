@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,14 +20,17 @@ namespace SlickTicket.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IBTProjectService _projectService;
         private readonly IBTCompanyInfoService _infoService;
+        private readonly UserManager<BTUser> _userManager;
 
         public ProjectsController(ApplicationDbContext context,
                                   IBTProjectService projectService,
-                                  IBTCompanyInfoService infoService)
+                                  IBTCompanyInfoService infoService,
+                                  UserManager<BTUser> userManager)
         {
             _context = context;
             _projectService = projectService;
             _infoService = infoService;
+            _userManager = userManager;
         }
 
         // GET: Projects
@@ -36,6 +40,8 @@ namespace SlickTicket.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        //Company Projects
+        [HttpGet]
         public async Task<IActionResult> CompanyProjects(int? id)
         {
             if (id == null)
@@ -53,6 +59,22 @@ namespace SlickTicket.Controllers
 
             return View(model);
         }
+
+        //My Projects
+        [HttpGet]
+        public async Task<IActionResult> MyProjects()
+        {
+            var myId = (await _userManager.GetUserAsync(User)).Id;
+            var model = await _projectService.ListUserProjectsAsync(myId);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
 
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)

@@ -19,12 +19,14 @@ namespace SlickTicket.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IBTTicketService _ticketService;
         private readonly UserManager<BTUser> _userManager;
+        private readonly IBTProjectService _projectService;
 
-        public TicketsController(ApplicationDbContext context, IBTTicketService ticketService, UserManager<BTUser> userManager)
+        public TicketsController(ApplicationDbContext context, IBTTicketService ticketService, UserManager<BTUser> userManager, IBTProjectService projectService)
         {
             _context = context;
             _ticketService = ticketService;
             _userManager = userManager;
+            _projectService = projectService;
         }
 
         // GET: Tickets
@@ -51,40 +53,52 @@ namespace SlickTicket.Controllers
                 return NotFound();
             }
 
-            var ticket = /*await _ticketService.GetAllTicketsByCompanyAsync(Id);*/
-                await _context.Ticket
-                .Include(t => t.DeveloperUser)
-                .Include(t => t.OwnerUser)
-                .Include(t => t.Project)
-                .Include(t => t.TicketPriority)
-                .Include(t => t.TicketStatus)
-                .Include(t => t.TicketType)
-                .Include(t => t.Attachments)
-                .Include(t => t.History)
-                .Include(t => t.Comments)
-                .Include(t => t.Notifications)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var companyId = User.Identity.GetCompanyId().Value;
+            var model = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+            //await _context.Ticket
+            //    .Include(t => t.DeveloperUser)
+            //    .Include(t => t.OwnerUser)
+            //    .Include(t => t.Project)
+            //    .Include(t => t.TicketPriority)
+            //    .Include(t => t.TicketStatus)
+            //    .Include(t => t.TicketType)
+            //    .Include(t => t.Attachments)
+            //    .Include(t => t.History)
+            //    .Include(t => t.Comments)
+            //    .Include(t => t.Notifications)
+            //    .FirstOrDefaultAsync(m => m.Id == id);
 
-            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name", ticket.TicketTypeId);
-
-            if (ticket == null)
+            if (model == null)
             {
                 return NotFound();
             }
 
-            return View(ticket);
+            return View(model);
         }
 
         // GET: Tickets/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name");
+            //get current user
+            BTUser btUser =await _userManager.GetUserAsync(User);
+
+            //get current user's company Id
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            //TODO: Filter List
+            if (User.IsInRole("Administrator"))
+            {
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompany(companyId), "Id", "Name");
+            }
+            else
+            {
+                ViewData["ProjectId"] = new SelectList(await _projectService.ListUserProjectsAsync(btUser.Id), "Id", "Name");
+            }
+
             ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name");
-            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name");
+
+
+
             ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name");
             return View();
         }
@@ -94,20 +108,21 @@ namespace SlickTicket.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,Created,Updated,Archived,ArchivedDate,ProjectId,StatusId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,DeveloperUserId")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
+                ticket.Created = DateTimeOffset.Now;
+
+                string userId = _userManager.GetUserId(User);
+                ticket.OwnerUserId = userId;
+                ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync("New")).Value;
+
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details","Projects", new { id = ticket.ProjectId});
             }
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperUserId);
-            ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnerUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name", ticket.ProjectId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Id", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Id", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Id", ticket.TicketTypeId);
+
             return View(ticket);
         }
 
