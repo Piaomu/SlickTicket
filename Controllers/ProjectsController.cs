@@ -98,12 +98,8 @@ namespace SlickTicket.Controllers
         }
 
         // GET: Projects/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            //get current user
-            BTUser btUser = await _userManager.GetUserAsync(User);
-            //get current user's company Id
-
 
             ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Name");
             return View();
@@ -114,19 +110,21 @@ namespace SlickTicket.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,StartDate,EndDate,ProjectPriorityId,ImageFileName,ImageContentType,Archived")] Project project)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,StartDate,EndDate,ProjectPriorityId,ImageFileName,ImageContentType")] Project project)
         {
 
             int companyId = User.Identity.GetCompanyId().Value;
 
             if (ModelState.IsValid)
             {
+                project.CompanyId = companyId;
+
                 _context.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Id", project.ProjectPriorityId);
+            ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
+            ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Name", project.ProjectPriorityId);
             return View(project);
         }
 
