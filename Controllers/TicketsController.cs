@@ -11,6 +11,7 @@ using SlickTicket.Extensions;
 using SlickTicket.Models;
 using SlickTicket.Services;
 using SlickTicket.Services.Interfaces;
+using SlickTicket.Models.ViewModels;
 
 namespace SlickTicket.Controllers
 {
@@ -192,15 +193,25 @@ namespace SlickTicket.Controllers
         [HttpGet]
         public async Task<IActionResult> MyTickets()
         {
-            string myId = (await _userManager.GetUserAsync(User)).Id;
-            //get companyId
-            int companyId = User.Identity.GetCompanyId().Value;
+            var userId = _userManager.GetUserId(User);
+            var devTickets = await _ticketService.GetAllTicketsByRoleAsync("Developer", userId);
+            var subTickets = await _ticketService.GetAllTicketsByRoleAsync("Submitter", userId);
+            var viewModel = new MyTicketsViewModel()
+            {
+                DevTickets = devTickets,
+                SubTickets = subTickets
+            };
 
-            var tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+            return View(viewModel);
+            //string myId = (await _userManager.GetUserAsync(User)).Id;
+            ////get companyId
+            //int companyId = User.Identity.GetCompanyId().Value;
 
-            var model = tickets.Where(t => t.OwnerUserId == myId);
+            //var tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
 
-            return View(model);
+            //var model = tickets.Where(t => t.OwnerUserId == myId);
+
+            //return View(model);
 
 
         }

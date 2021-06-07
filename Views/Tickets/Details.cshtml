@@ -4,8 +4,11 @@
 @inject IBTProjectService _projectService 
 
 @{
+    //var projectManager = await _projectService.GetProjectManagerAsync(Model.Id);
     ViewData["Title"] = "Ticket Details";
 }
+
+
 
 <!-- Main content -->
 <section class="content">
@@ -122,8 +125,8 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
-                    <h3 class="text-primary"><i class="fas fa-paint-brush"></i> AdminLTE v3</h3>
-                    <p class="text-muted">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terr.</p>
+                    <h3 class="text-primary"><i class="fas fa-paint-brush"></i> Description</h3>
+                    <p class="text-muted">@Model.Description</p>
                     <br>
                     <div class="text-muted">
                         <p class="text-sm">
@@ -132,7 +135,7 @@
                         </p>
                         <p class="text-sm">
                             Project Manager
-                            <b class="d-block">@await _projectService.GetProjectManagerAsync(Model.Id)</b>
+                            <b class="d-block">@*@projectManager?.FullName*@</b>
                         </p>
                     </div>
 

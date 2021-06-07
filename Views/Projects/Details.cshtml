@@ -2,6 +2,7 @@
 @model SlickTicket.Models.Project
 @inject  IBTProjectService _projectService
 @{
+    var projectManager = await _projectService.GetProjectManagerAsync(Model.Id);
     ViewData["Title"] = "Details";
 }
 
@@ -150,7 +151,7 @@
                                 <p class="text-sm">
                                     Project Manager
                                     @*What syntax can I use to return the full name of the BTUser that this method returns?*@
-                                    <b class="d-block">@await _projectService.GetProjectManagerAsync(Model.Id)</b>
+                                    <b class="d-block">@projectManager?.FullName</b>
                                 </p>
                             </div>
 
