@@ -84,11 +84,22 @@ namespace SlickTicket.Controllers
                 return NotFound();
             }
 
+            ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Name");
             var project = await _context.Project
                 .Include(p => p.Members)
                 .Include(p => p.Company)
                 .Include(p => p.ProjectPriority)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            var pm = await _projectService.GetProjectManagerAsync(project.Id);
+
+            if (project.Archived == true)
+            {
+                ViewData["Archived"] = "Yes";
+            }
+
+            ViewData["Archived"] = "No";
+
             if (project == null)
             {
                 return NotFound();

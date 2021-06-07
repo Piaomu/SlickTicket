@@ -1,4 +1,7 @@
-﻿@model SlickTicket.Models.Ticket
+﻿@using SlickTicket.Services.Interfaces 
+@model SlickTicket.Models.Ticket
+
+@inject IBTProjectService _projectService 
 
 @{
     ViewData["Title"] = "Ticket Details";
@@ -10,6 +13,7 @@
     <!-- Default box -->
     <div class="card">
         <div class="card-header">
+            <h1>Ticket Details</h1>
             <h3 class="card-title">@Model.Title</h3>
 
             <div class="card-tools">
@@ -53,21 +57,27 @@
                     <div class="row">
                         <div class="col-12">
                             <h4>Recent Activity</h4>
+                            <form asp-action="Create" asp-controller="Comments" method="post">
+                                <input type="hidden" name="TicketId" value="@Model.Id" />
+                                <textarea class="form-control" name="Body" rows="3" placeholder="Add a comment..."></textarea>
+                                <button class="btn btn-dark btn-block btn-small Oz" type="submit">Add Comment</button>
+
+                            </form>
                             @foreach (var comment in Model.Comments)
                             {
-                            <div class="post">
-                                <div class="user-block">
-                                    <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
-                                    <span class="username">
-                                        <a href="#">@comment.User.FullName</a>
-                                    </span>
-                                    <span class="description">Shared at - @comment.Created</span>
+                                <div class="post">
+                                    <div class="user-block">
+                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
+                                        <span class="username">
+                                            <a href="#">@comment.User.FullName</a>
+                                        </span>
+                                        <span class="description">Shared at - @comment.Created</span>
+                                    </div>
+                                    <!-- /.user-block -->
+                                    <p>
+                                        @Html.Raw(comment.Comment)
+                                    </p>
                                 </div>
-                                <!-- /.user-block -->
-                                <p>
-                                    @comment.Comment
-                                </p>
-                            </div>
                             }
 
                             <div class="post clearfix">
@@ -121,8 +131,8 @@
                             <b class="d-block">Deveint Inc</b>
                         </p>
                         <p class="text-sm">
-                            Project Leader
-                            <b class="d-block">Tony Chicken</b>
+                            Project Manager
+                            <b class="d-block">@await _projectService.GetProjectManagerAsync(Model.Id)</b>
                         </p>
                     </div>
 
