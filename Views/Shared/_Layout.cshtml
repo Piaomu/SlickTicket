@@ -225,7 +225,7 @@
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
-            <a href="index3.html" class="brand-link">
+            <a asp-controller="Home" asp-action="Dashboard" class="brand-link">
                 <img src="~/android-chrome-192x192.png" alt="SlickTicket Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
                 <span class="brand-text font-weight-light">Slick Ticket</span>
             </a>
@@ -312,8 +312,8 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="pages/widgets.html" class="nav-link">
-                                <i class="nav-icon fas fa-edit text-purple"></i>
+                            <a asp-controller = "Projects" asp-action="Create" class="nav-link">
+                                <i class="nav-icon far fa-plus-square text-purple"></i>
                                 <p>
                                     NEW Project
                                     <span class="right badge badge-danger">New</span>
@@ -321,8 +321,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="pages/widgets.html" class="nav-link">
-                                <i class="nav-icon fas fa-edit text-cyan"></i>
+                            <a asp-controller="Tickets" asp-action="Create" class="nav-link">
+                                <i class="nav-icon far fa-plus-square text-cyan"></i>
                                 <p>
                                     NEW Ticket
                                     <span class="right badge badge-danger">New</span>
