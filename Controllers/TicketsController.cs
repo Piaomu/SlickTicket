@@ -21,13 +21,15 @@ namespace SlickTicket.Controllers
         private readonly IBTTicketService _ticketService;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTProjectService _projectService;
+        private readonly IBTHistoryService _historyService;
 
-        public TicketsController(ApplicationDbContext context, IBTTicketService ticketService, UserManager<BTUser> userManager, IBTProjectService projectService)
+        public TicketsController(ApplicationDbContext context, IBTTicketService ticketService, UserManager<BTUser> userManager, IBTProjectService projectService, IBTHistoryService historyService)
         {
             _context = context;
             _ticketService = ticketService;
             _userManager = userManager;
             _projectService = projectService;
+            _historyService = historyService;
         }
 
         // GET: Tickets
@@ -73,6 +75,22 @@ namespace SlickTicket.Controllers
             {
                 return NotFound();
             }
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> AssignTicket(int? ticketId)
+        {
+            if (!ticketId.HasValue)
+            {
+                return NotFound();
+            }
+
+            AssignDeveloperViewModel model = new();
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            model.Ticket = (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).FirstOrDefault(t=>t.Id==ticketId);
+            model.Developers = new SelectList(await _projectService.DevelopersOnProjectAsync(model.Ticket.ProjectId), "Id", "FullName");
 
             return View(model);
         }
@@ -163,8 +181,21 @@ namespace SlickTicket.Controllers
 
             if (ModelState.IsValid)
             {
+
+                int companyId = User.Identity.GetCompanyId().Value;
+                BTUser user = await _userManager.GetUserAsync(User);
+                BTUser pm = await _projectService.GetProjectManagerAsync(ticket.ProjectId);
+
+                Ticket oldTicket = await _context.Ticket.Include(t => t.TicketPriority)
+                                                        .Include(t => t.TicketStatus)
+                                                        .Include(t => t.TicketType)
+                                                        .Include(t => t.Project)
+                                                        .Include(t => t.DeveloperUser)
+                                                        .AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticket.Id);
+
                 try
                 {
+                    ticket.Updated = DateTimeOffset.Now;
                     _context.Update(ticket);
                     await _context.SaveChangesAsync();
                 }
@@ -179,6 +210,17 @@ namespace SlickTicket.Controllers
                         throw;
                     }
                 }
+
+                //Add History
+                Ticket newTicket = await _context.Ticket.Include(t => t.TicketPriority)
+                                        .Include(t => t.TicketStatus)
+                                        .Include(t => t.TicketType)
+                                        .Include(t => t.Project)
+                                        .Include(t => t.DeveloperUser)
+                                        .AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticket.Id);
+
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperUserId);

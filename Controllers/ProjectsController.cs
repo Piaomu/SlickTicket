@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -109,6 +110,7 @@ namespace SlickTicket.Controllers
         }
 
         // GET: Projects/Create
+        [Authorize(Roles = "Administrator, Project Manager")]
         public IActionResult Create()
         {
 
@@ -139,6 +141,7 @@ namespace SlickTicket.Controllers
             return View(project);
         }
 
+        [Authorize(Roles = "Administrator, Project Manager")]
         // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
