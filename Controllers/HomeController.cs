@@ -13,6 +13,7 @@ using SlickTicket.Extensions;
 using SlickTicket.Services.Interfaces;
 using SlickTicket.Models.ViewModels;
 using SlickTicket.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SlickTicket.Controllers
 {
@@ -40,6 +41,7 @@ namespace SlickTicket.Controllers
             _userManager = userManager;
         }
 
+        [Authorize]
         public async Task<IActionResult> Dashboard() 
         {
             var userId = _userManager.GetUserId(User);
@@ -55,6 +57,11 @@ namespace SlickTicket.Controllers
             };
 
             return View(viewModel);
+        }
+
+        public IActionResult Landing()
+        {
+            return View();
         }
         public IActionResult Index()
         {
