@@ -10,25 +10,35 @@ namespace SlickTicket.Services
 {
     public class BTFileService : IBTFileService
     {
+        private readonly string[] suffixes = { "Bytes", "KB", "MB", "GB", "TB", "PB" };
         public string ConvertByteArrayToFile(byte[] fileData, string extension)
         {
-            if (fileData is null || extension is null) return null;
-            return $"data:image/{extension};base64,{Convert.ToBase64String(fileData)}";
+            string imageBase64Data = Convert.ToBase64String(fileData);
+            
+            return string.Format($"data:image/{extension};base64,{imageBase64Data}");
         }
 
         public async Task<byte[]> ConvertFileToByteArrayAsync(IFormFile file)
         {
-            if (file is null) return null;
+            MemoryStream memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+            var byteFile = memoryStream.ToArray();
+            memoryStream.Close();
+            memoryStream.Dispose();
 
-            //This triggers more aggressive garbage collection
-            using var ms = new MemoryStream();
-            await file.CopyToAsync(ms);
-            return ms.ToArray();
+            return byteFile;
         }
 
         public string FormatFileSize(long bytes)
         {
-            throw new NotImplementedException();
+            int counter = 0;
+            decimal number = bytes;
+            while (Math.Round(number / 1024) >= 1)
+            {
+                number /= 1024;
+                counter++;
+            }
+            return string.Format("{0:n1}{1}", number, suffixes[counter]);
         }
 
         public string GetFileIcon(string file)

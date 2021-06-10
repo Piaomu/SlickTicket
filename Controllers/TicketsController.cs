@@ -23,13 +23,15 @@ namespace SlickTicket.Controllers
         private readonly IBTProjectService _projectService;
         private readonly IBTHistoryService _historyService;
         private readonly IBTCompanyInfoService _infoService;
+        private readonly IBTNotificationService _notificationService;
 
         public TicketsController(ApplicationDbContext context, 
                                  IBTTicketService ticketService, 
                                  UserManager<BTUser> userManager, 
                                  IBTProjectService projectService, 
                                  IBTHistoryService historyService,
-                                 IBTCompanyInfoService infoService)
+                                 IBTCompanyInfoService infoService,
+                                 IBTNotificationService notificationService)
         {
             _context = context;
             _ticketService = ticketService;
@@ -37,6 +39,7 @@ namespace SlickTicket.Controllers
             _projectService = projectService;
             _historyService = historyService;
             _infoService = infoService;
+            _notificationService = notificationService;
         }
 
         // GET: Tickets
@@ -172,14 +175,55 @@ namespace SlickTicket.Controllers
         {
             if (ModelState.IsValid)
             {
+                BTUser user = await _userManager.GetUserAsync(User);
+
                 ticket.Created = DateTimeOffset.Now;
 
                 string userId = _userManager.GetUserId(User);
                 ticket.OwnerUserId = userId;
                 ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync("New")).Value;
 
-                _context.Add(ticket);
+                await _context.AddAsync(ticket);
                 await _context.SaveChangesAsync();
+
+                #region Add History
+                //Add history
+                Ticket newTicket = await _context.Ticket
+                                                 .Include(t => t.TicketPriority)
+                                                 .Include(t => t.TicketStatus)
+                                                 .Include(t => t.TicketType)
+                                                 .Include(t => t.Project)
+                                                 .Include(t => t.DeveloperUser)
+                                                 .AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticket.Id);
+
+                await _historyService.AddHistoryAsync(null, newTicket, user.Id);
+                #endregion
+
+                #region Notification
+                BTUser projectManager = await _projectService.GetProjectManagerAsync(ticket.ProjectId);
+                int companyId = User.Identity.GetCompanyId().Value;
+                
+                Notification notification = new()
+                {
+                    TicketId = ticket.Id,
+                    Title = "New Ticket",
+                    Message = $"New Ticket: {ticket?.Title}, was created by {user?.FullName}",
+                    Created = DateTimeOffset.Now,
+                    SenderId = user?.Id,
+                    RecipientId = projectManager?.Id
+                };
+
+                if (projectManager != null)
+                {
+                    await _notificationService.SaveNotificationAsync(notification);
+                }
+                else
+                {
+                    //Admin notification
+                    await _notificationService.AdminsNotificationAsync(notification, companyId);
+                }
+                #endregion
+
                 return RedirectToAction("Details","Projects", new { id = ticket.ProjectId});
             }
 
