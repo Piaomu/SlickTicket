@@ -22,14 +22,21 @@ namespace SlickTicket.Controllers
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTProjectService _projectService;
         private readonly IBTHistoryService _historyService;
+        private readonly IBTCompanyInfoService _infoService;
 
-        public TicketsController(ApplicationDbContext context, IBTTicketService ticketService, UserManager<BTUser> userManager, IBTProjectService projectService, IBTHistoryService historyService)
+        public TicketsController(ApplicationDbContext context, 
+                                 IBTTicketService ticketService, 
+                                 UserManager<BTUser> userManager, 
+                                 IBTProjectService projectService, 
+                                 IBTHistoryService historyService,
+                                 IBTCompanyInfoService infoService)
         {
             _context = context;
             _ticketService = ticketService;
             _userManager = userManager;
             _projectService = projectService;
             _historyService = historyService;
+            _infoService = infoService;
         }
 
         // GET: Tickets
@@ -79,6 +86,7 @@ namespace SlickTicket.Controllers
             return View(model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> AssignTicket(int? ticketId)
         {
             if (!ticketId.HasValue)
@@ -93,6 +101,39 @@ namespace SlickTicket.Controllers
             model.Developers = new SelectList(await _projectService.DevelopersOnProjectAsync(model.Ticket.ProjectId), "Id", "FullName");
 
             return View(model);
+        }
+
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> AssignTicket(AssignDeveloperViewModel viewModel)
+        {
+            if (!string.IsNullOrEmpty(viewModel.DeveloperId))
+            {
+                int companyId = User.Identity.GetCompanyId().Value;
+
+                BTUser user = await _userManager.GetUserAsync(User);
+                BTUser developer = (await _infoService.GetAllMembersAsync(companyId)).FirstOrDefault(m => m.Id == viewModel.DeveloperId);
+                BTUser projectManager = await _projectService.GetProjectManagerAsync(viewModel.Ticket.ProjectId);
+
+                Ticket oldTicket = await _context.Ticket.Include(t => t.TicketPriority)
+                                        .Include(t => t.TicketStatus)
+                                        .Include(t => t.TicketType)
+                                        .Include(t => t.Project)
+                                        .Include(t => t.DeveloperUser)
+                                        .AsNoTracking().FirstOrDefaultAsync(t => t.Id == viewModel.Ticket.Id);
+
+                await _ticketService.AssignTicketAsync(viewModel.Ticket.Id, viewModel.DeveloperId);
+
+                Ticket newTicket = await _context.Ticket.Include(t => t.TicketPriority)
+                                        .Include(t => t.TicketStatus)
+                                        .Include(t => t.TicketType)
+                                        .Include(t => t.Project)
+                                        .Include(t => t.DeveloperUser)
+                                        .AsNoTracking().FirstOrDefaultAsync(t => t.Id == viewModel.Ticket.Id);
+
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
+            }
+            return RedirectToAction("Details", new { id = viewModel.Ticket.Id });
         }
 
         // GET: Tickets/Create

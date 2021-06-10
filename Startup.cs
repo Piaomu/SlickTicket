@@ -48,6 +48,7 @@ namespace SlickTicket
             services.AddScoped<IBTProjectService, BTProjectService>();
             services.AddScoped<IBTTicketService, BTTicketService>();
             services.AddScoped<IBTCompanyInfoService, BTCompanyInfoService>();
+            services.AddScoped<IBTHistoryService, BTHistoryService>();
 
 
 
