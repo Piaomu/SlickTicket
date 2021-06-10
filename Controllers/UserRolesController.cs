@@ -60,7 +60,7 @@ namespace SlickTicket.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MangeUserRoles(ManageUserRolesViewModel member)
+        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
         {
             BTUser user = _context.Users.Find(member.BTUser.Id);
 
