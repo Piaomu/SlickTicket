@@ -43,7 +43,8 @@ namespace SlickTicket.Services
 
         public string GetFileIcon(string file)
         {
-            throw new NotImplementedException();
+            string ext = Path.GetExtension(file).Replace(".", "");
+            return $"/img/png/{ext}.png";
         }
     }
 }

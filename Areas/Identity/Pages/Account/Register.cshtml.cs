@@ -46,6 +46,7 @@ namespace SlickTicket.Areas.Identity.Pages.Account
 
         public class InputModel
         {
+            
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -53,12 +54,12 @@ namespace SlickTicket.Areas.Identity.Pages.Account
 
             [Required]
             [Display(Name = "First Name")]
-            [StringLength(50)]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters.", MinimumLength = 2)]
             public string FirstName { get; set; }
 
             [Required]
             [Display(Name = "Last Name")]
-            [StringLength(50)]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters.", MinimumLength = 2)]
             public string LastName { get; set; }
 
             [Required]

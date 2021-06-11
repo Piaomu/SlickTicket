@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using SlickTicket.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,8 +21,11 @@ namespace SlickTicket.Models
         [DisplayName("Team Member")]
         public string UserId { get; set; }
 
+        [Display(Name = "Select Image")]
         [NotMapped]
         [DataType(DataType.Upload)]
+        [MaxFileSize(2 * 1024 * 1024)]
+        [AllowedExtensions(new string[] {".jpg", ".png", ".doc", ".docx", ".xlsx", ".pdf"})]
         public IFormFile FormFile { get; set; }
         public string FileName { get; set; }
         public byte[] FileData { get; set; }

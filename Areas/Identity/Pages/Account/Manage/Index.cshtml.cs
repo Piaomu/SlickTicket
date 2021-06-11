@@ -33,6 +33,14 @@ namespace SlickTicket.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
+            [Required]
+            [Display(Name = "First Name")]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters.", MinimumLength = 2)]
+            public string FirstName { get; set; }
+            
+            [Required]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters.", MinimumLength = 2)]
+            public string LastName { get; set; }
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
@@ -87,6 +95,20 @@ namespace SlickTicket.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
+
+            if(Input.FirstName != user.FirstName)
+            {
+                user.FirstName = Input.FirstName;
+                await _userManager.UpdateAsync(user);
+            }
+
+            if (Input.LastName != user.LastName)
+            {
+                user.LastName = Input.LastName;
+                await _userManager.UpdateAsync(user);
+            }
+
+            //Don't forget to manage IFormFile for avatar photo
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

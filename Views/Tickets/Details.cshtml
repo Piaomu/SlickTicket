@@ -2,6 +2,7 @@
 @model SlickTicket.Models.Ticket
 
 @inject IBTProjectService _projectService 
+@inject IBTFileService BtFileService 
 
 @{
     //var projectManager = await _projectService.GetProjectManagerAsync(Model.Id);
@@ -141,25 +142,48 @@
 
                     <h5 class="mt-5 text-muted">Project files</h5>
                     <ul class="list-unstyled">
-                        <li>
-                            <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Functional-requirements.docx</a>
-                        </li>
-                        <li>
-                            <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-pdf"></i> UAT.pdf</a>
-                        </li>
-                        <li>
-                            <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-envelope"></i> Email-from-flatbal.mln</a>
-                        </li>
-                        <li>
-                            <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-image "></i> Logo.png</a>
-                        </li>
-                        <li>
-                            <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Contract-10_12_2014.docx</a>
-                        </li>
-                    </ul>
-                    <div class="text-center mt-5 mb-3">
-                        <a href="#" class="btn btn-sm btn-primary">Add files</a>
-                        <a href="#" class="btn btn-sm btn-warning">Report contact</a>
+                        <div class="row clearfix">
+                            @foreach (TicketAttachment item in Model.Attachments)
+                            {
+                        <div class="col-sm-2">
+                            <div class="card">
+                                <div class="file">
+                                    <a class="btn btn-icon btn-danger" asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
+                                        <div class="hover">
+                                            @*<button type="button" class="btn btn-icon btn-danger"> </button>*@
+                                                <i class="fa fa-trash"></i>
+                                           
+                                        </div>
+                                        <div class="icon">
+                                            <img src="@BtFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
+                                        </div>
+                                        <div class="file-name">
+                                            <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
+                                            <small>Size: @BtFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>}
+                        </div>
+                    <div class="border-1 border-light">
+                        <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input type="hidden" asp-for="@Model.Id" name="TicketId">
+
+
+                            <div class="media-body ml-3">
+                                <label class="form-label d-block mb-2">Add Attachment</label>
+                                <label>
+                                    Description
+                                    <input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" />
+                                </label><br />
+                                <label class="btn btn-outline-primary btn-sm">
+                                    <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" />
+                                </label>
+                                <button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -167,7 +191,6 @@
         <!-- /.card-body -->
     </div>
     <!-- /.card -->
-
 </section>
 
 <div>

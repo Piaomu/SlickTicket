@@ -12,6 +12,7 @@ using SlickTicket.Models;
 using SlickTicket.Services;
 using SlickTicket.Services.Interfaces;
 using SlickTicket.Models.ViewModels;
+using System.IO;
 
 namespace SlickTicket.Controllers
 {
@@ -87,6 +88,17 @@ namespace SlickTicket.Controllers
             }
 
             return View(model);
+        }
+
+        public async Task<IActionResult> ShowFile(int id)
+        {
+            TicketAttachment ticketAttachment = await _context.TicketAttachment.FindAsync(id);
+            string fileName = ticketAttachment.FileName;
+            byte[] fileData = ticketAttachment.FileData;
+            string ext = Path.GetExtension(fileName).Replace(".", "");
+
+            return File(fileData, $"application/{ext}");
+
         }
 
         [HttpGet]
@@ -263,6 +275,7 @@ namespace SlickTicket.Controllers
             {
                 return NotFound();
             }
+            Notification notification;
 
             if (ModelState.IsValid)
             {
@@ -283,6 +296,44 @@ namespace SlickTicket.Controllers
                     ticket.Updated = DateTimeOffset.Now;
                     _context.Update(ticket);
                     await _context.SaveChangesAsync();
+
+                    notification = new()
+                    {
+                        TicketId = ticket.Id,
+                        Title = $"Ticket modified on project - {oldTicket.Project.Name}",
+                        Message = $"Ticket: [{ticket.Id}]:{ticket.Title} updated by {user?.FullName}",
+                        Created = DateTimeOffset.Now,
+                        SenderId = user?.Id,
+                        RecipientId = pm?.Id
+                    };
+
+                    if(pm != null)
+                    {
+                        await _notificationService.SaveNotificationAsync(notification);
+                        await _notificationService.EmailNotificationAsync(notification, "New Ticket Added");
+                    }
+                    else
+                    {
+                        //Admin notification
+                        await _notificationService.AdminsNotificationAsync(notification, companyId);
+                    }
+
+                    //Alert developer if ticket is modified
+                    if(ticket.DeveloperUserId != null)
+                    {
+                        notification = new()
+                        {
+                            TicketId = ticket.Id,
+                            Title = "A ticket assigned to you has been modififed",
+                            Message = $"Ticket: [{ticket.Id}]:{ticket.Title} updated by {user?.FullName}",
+                            Created = DateTimeOffset.Now,
+                            SenderId = user?.Id,
+                            RecipientId = ticket.DeveloperUserId
+                        };
+
+                        await _notificationService.SaveNotificationAsync(notification);
+                    }
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
