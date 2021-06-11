@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using SlickTicket.Data;
 using SlickTicket.Extensions;
 using SlickTicket.Models;
@@ -37,16 +38,16 @@ namespace SlickTicket.Controllers
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
-            var companyId = User.Identity.GetCompanyId();
+            var companyId = User.Identity.GetCompanyId().Value;
 
             List<ManageUserRolesViewModel> model = new();
 
             //Am I trying to limit the Admin to Manage users roles only by their company?
-            List<BTUser> companyUsers = await _infoService.GetAllMembersAsync((int)companyId);
-            //TODO: CompanyUsers...little more work to do
-            List<BTUser> users = _context.Users.ToList();
+            List<BTUser> companyUsers = await _infoService.GetAllMembersAsync(companyId);
 
-            foreach (var user in users)
+            //List<BTUser> users = _context.Users.ToList();
+
+            foreach (var user in companyUsers)
             {
                 ManageUserRolesViewModel vm = new();
                 vm.BTUser = user;
@@ -60,14 +61,14 @@ namespace SlickTicket.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
+        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel btUser)
         {
-            BTUser user = _context.Users.Find(member.BTUser.Id);
+            BTUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == btUser.BTUser.Id);
 
             IEnumerable<string> roles = await _rolesService.ListUserRolesAsync(user);
             
             await _rolesService.RemoveUserFromRolesAsync(user, roles);
-            string userRole = member.SelectedRoles.FirstOrDefault();
+            string userRole = btUser.SelectedRoles.FirstOrDefault();
 
             //What purpose is roleValue serving?
             if (Enum.TryParse(userRole, out Roles roleValue))

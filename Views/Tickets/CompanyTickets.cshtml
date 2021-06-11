@@ -36,24 +36,31 @@
                     <table id="companytickets" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Rendering engine</th>
-                                <th>Browser</th>
-                                <th>Platform(s)</th>
-                                <th>Engine version</th>
-                                <th>CSS grade</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Created</th>
+                                <th>Priority</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Assign Members</th>
+                                <th>Edit</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach (Ticket ticket in Model)
+                            {
                             <tr>
-                                <td>Trident</td>
+                                <td>@ticket.Title</td>
+                                <td>@ticket.Description</td>
+                                <td>@ticket.Created</td>
+                                <td>@ticket.TicketPriority.Name</td>
+                                <td>@ticket.TicketType.Name</td>
+                                <td>@ticket.TicketStatus.Name</td>
                                 <td>
-                                    Internet
-                                    Explorer 4.0
+                                    <a></a>
                                 </td>
-                                <td>Win 95+</td>
-                                <td> 4</td>
-                                <td>X</td>
                             </tr>
+                            }
                             <tr>
                                 <td>Trident</td>
                                 <td>

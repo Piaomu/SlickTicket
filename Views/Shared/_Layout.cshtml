@@ -239,7 +239,7 @@
                         <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">@user?.FullName </a>
+                        <a asp-area="identity" asp-page="/Account/Manage/Index" class="d-block">@user?.FullName </a>
                     </div>
                 </div>
 
@@ -293,14 +293,22 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a asp-controller="Projects" asp-action="MyProjects" class="nav-link">
-                                        <i class="far fa-circle nav-icon text-purple"></i>
+                                        <i class="fas fa-briefcase nav-icon text-purple"></i>
                                         <p>My Projects</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a asp-controller="Tickets" asp-action="MyTickets" class="nav-link">
-                                        <i class="far fa-circle nav-icon text-cyan"></i>
+                                        <i class="fas fa-file-alt nav-icon text-cyan"></i>
                                         <p>My Tickets</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Tickets" asp-action="AssignTicket" class="nav-link">
+                                        <i class="nav-icon far fa-plus-square text-purple"></i>
+                                        <p>
+                                            Assign Members
+                                        </p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -316,18 +324,28 @@
                                 <i class="nav-icon fas fa-tachometer-alt text-orange"></i>
                                 <p>Company Dashboard</p>
                                 <i class="right fas fa-angle-left"></i>
-
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
+                                    @if (User.IsInRole("Administrator"))
+                                    {
+                                        <a asp-controller="UserRoles" asp-action="ManageUserRoles" class="nav-link">
+                                            <i class="fas fa-people-arrows nav-icon text-maroon"></i>
+                                            <p>Manage Roles</p>
+                                        </a>
+                                        <a asp-controller="Invites" asp-action="Create" class="nav-link">
+                                            <i class="fas fa-people-arrows nav-icon text-maroon"></i>
+                                            <p>Invite a Member</p>
+                                        </a>
+                                    }
                                     <a asp-controller="Projects" asp-action="CompanyProjects" class="nav-link">
-                                        <i class="far fa-circle nav-icon text-purple"></i>
+                                        <i class="fas fa-briefcase nav-icon text-purple"></i>
                                         <p>Company Projects</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a asp-controller="Tickets" asp-action="CompanyTickets" class="nav-link">
-                                        <i class="far fa-circle nav-icon text-cyan"></i>
+                                        <i class="fas fa-file-alt nav-icon text-cyan"></i>
                                         <p>Company Tickets</p>
                                     </a>
                                 </li>

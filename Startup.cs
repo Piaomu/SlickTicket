@@ -43,8 +43,6 @@ namespace SlickTicket
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddClaimsPrincipalFactory<BTUserClaimsPrincipalFactory>();
 
-            services.AddMvc();
-
             services.AddScoped<IBTRolesService, BTRolesService>();
             services.AddScoped<IBTProjectService, BTProjectService>();
             services.AddScoped<IBTTicketService, BTTicketService>();
@@ -53,6 +51,9 @@ namespace SlickTicket
             services.AddScoped<IBTFileService, BTFileService>();
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<IBTNotificationService, BTNotificationService>();
+            services.AddScoped<IBTInviteService, BTInviteService>();
+
+            services.AddMvc();
 
 
 
