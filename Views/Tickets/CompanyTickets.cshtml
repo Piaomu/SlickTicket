@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<SlickTicket.Models.Ticket>
+@using SlickTicket.Services.Interfaces
+@inject IBTCompanyInfoService _infoService
 
 @{
     ViewData["Title"] = "Index";
@@ -29,7 +31,7 @@
             <!-- Responsive Data Table-->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">DataTable with default features</h3>
+                    <h3 class="card-title"></h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -44,6 +46,7 @@
                                 <th>Status</th>
                                 <th>Add Members</th>
                                 <th>Edit</th>
+                                <th>See Ticket</th>
                                 <th>Assigned to:</th>
                             </tr>
                         </thead>
@@ -63,6 +66,7 @@
                                 <td>
                                     <a class="btn btn-info text-dark" asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">Edit</a>
                                 </td>
+                                <td><a class="btn btn-success text-dark"  asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">Details</a></td>
                                 @*@if(ticket.DeveloperUser.FullName is not null) {
                                 <td>@ticket.DeveloperUser.FullName</td>
                                 }
@@ -95,42 +99,6 @@
     </div>
     <!-- /.row -->
 </div>
-
-
-
-
-
-<!-- Ugly Data Table-->
-<div class="card-body table-responsive p-0">
-    <table class="table table-hover text-nowrap">
-        <thead>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Title)</th>
-                <th>@Html.DisplayNameFor(model => model.Description)</th>
-                <th>@Html.DisplayNameFor(model => model.Created)</th>
-                <th>Owner</th>
-                <th>@Html.DisplayNameFor(model => model.TicketPriority)</th>
-                <th>@Html.DisplayNameFor(model => model.TicketType)</th>
-                <th>@Html.DisplayNameFor(model => model.TicketStatus)</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ticket in Model)
-            {
-                <tr>
-                    <td> @Html.DisplayFor(model => ticket.Title)</td>
-                    <td>@Html.DisplayFor(model => ticket.Description)</td>
-                    <td>@Html.DisplayFor(model => ticket.Created)</td>
-                    <td>@Html.DisplayFor(model => ticket.OwnerUser.FullName)</td>
-                    <td>@Html.DisplayFor(model => ticket.TicketPriority.Name)</td>
-                    <td>@Html.DisplayFor(model => ticket.TicketType.Name)</td>
-                    <td>@Html.DisplayFor(model => ticket.TicketStatus.Name)</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
 
 @*@section ScriptsPartial {
 <script>

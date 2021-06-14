@@ -52,6 +52,7 @@ namespace SlickTicket
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<IBTNotificationService, BTNotificationService>();
             services.AddScoped<IBTInviteService, BTInviteService>();
+            services.AddScoped<IImageService, BasicImageService>();
 
             services.AddMvc();
 
