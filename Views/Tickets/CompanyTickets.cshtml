@@ -1,6 +1,9 @@
 ﻿@model IEnumerable<SlickTicket.Models.Ticket>
 @using SlickTicket.Services.Interfaces
+@using SlickTicket.Extensions 
 @inject IBTCompanyInfoService _infoService
+@inject IBTTicketService _ticketService
+@inject IBTProjectService _projectService
 
 @{
     ViewData["Title"] = "Index";
@@ -85,8 +88,11 @@
                                 <th>Created</th>
                                 <th>Priority</th>
                                 <th>Type</th>
+                                <th>Status</th>
                                 <th>Add Members</th>
                                 <th>Edit</th>
+                                <th>See Ticket</th>
+                                <th>Assigned to:</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -99,6 +105,7 @@
     </div>
     <!-- /.row -->
 </div>
+
 
 @*@section ScriptsPartial {
 <script>

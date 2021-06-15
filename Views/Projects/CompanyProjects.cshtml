@@ -1,69 +1,151 @@
 ﻿@model IEnumerable<SlickTicket.Models.Project>
+@using SlickTicket.Services.Interfaces
+@inject IBTCompanyInfoService _infoService
+@inject IImageService _imageService
+@inject IBTRolesService _roleService
 @{
     ViewData["Title"] = "Company Projects";
 }
 
-<h1>Company Projects</h1>
+<!-- Main content -->
+<section class="content">
 
-<div>
-    <hr />
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Company Projects</h3>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">@Html.DisplayNameFor(model => model.Name)</h3>
-
-                    <div class="card-tools">
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-hover text-nowrap">
-                        <thead>
-                            <tr>
-                                <th>@Html.DisplayNameFor(model => model.Name)</th>
-                                <th>@Html.DisplayNameFor(model => model.Description)</th>
-                                <th>@Html.DisplayNameFor(model => model.StartDate)</th>
-                                <th>@Html.DisplayNameFor(model => model.EndDate)</th>
-                                <th>@Html.DisplayNameFor(model => model.Archived)</th>
-                                <th>Members</th>
-                                <th>Project Manager</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var project in Model)
-                            {
-                                <tr>
-                                    <td>@Html.DisplayFor(model => project.Name)</td>
-                                    <td>@Html.DisplayFor(model => project.Description)</td>
-                                    <td>@Html.DisplayFor(model => project.StartDate)</td>
-                                    <td>@Html.DisplayFor(model => project.EndDate)</td>
-                                    <td>@Html.DisplayFor(model => project.Archived)</td>
-                                    @foreach (var member in project.Members)
-                                    {
-                                    <td>@member.FullName</td>
-                                    }
-                                <td>Project McManager</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.card-body -->
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         </div>
+        <div class="card-body p-0">
+            <table class="table table-striped projects">
+                <thead>
+                    <tr>
+                        <th style="width: 20%">
+                            Project Name
+                        </th>
+                        <th style="width: 40%">
+                            Team Members
+                        </th>
+                        <th>
+                            Priority
+                        </th>
+                        <th class="text-center">
+                            Tickets
+                        </th>
+                        <th style="width: 20%">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Project project in Model)
+                    {
+                    <tr>
+                        <td>
+                            <a class="badge-pill badge-info text-bold" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">
+                                @project.Name
+                            </a>
+                            <br />
+                            <small>
+                                <span class="text-green text-bold">Starts</span>  @project.StartDate
+                            </small>
+                            <br />
+                            <small>
+                                <span class="text-red text-bold">Ends</span> @project.EndDate
+                            </small>
+                        </td>
+                        <td>
+
+                            <ul class="list-inline">
+                                @foreach (BTUser member in project.Members)
+                                {
+                                <li class="list-inline-item pb-2">
+                                    <img style="height:40px; width:40px;" alt="Avatar" class="table-avatar" src="@_imageService.DecodeImage(member.AvatarFileData, member.AvatarContentType)" data-toggle="popover" data-trigger="hover" data-content="@member.FullName" data-placement="top" data-container="body">
+                                    <div class="badge">@((await _roleService.ListUserRolesAsync(member)).First())</div>
+                                </li>
+                                }
+                            </ul>
+                            
+                        </td>
+                        <td>
+                            @if (project.ProjectPriority.Name == "Urgent")
+                            {
+                                <span class="badge-danger badge-pill">
+                                    @project.ProjectPriority.Name
+                                </span>
+                            }
+                            @if (project.ProjectPriority.Name == "High")
+                            {
+                                <span class="badge-dark badge-pill">
+                                    @project.ProjectPriority.Name
+                                </span>
+                            }
+                            @if (project.ProjectPriority.Name == "Medium")
+                            {
+                                <span class="badge-secondary badge-pill">
+                                    @project.ProjectPriority.Name
+                                </span>
+                            }
+                            @if (project.ProjectPriority.Name == "Low")
+                            {
+                                <span class="badge-light badge-pill">
+                                    @project.ProjectPriority.Name
+                                </span>
+                            }
+                        </td>
+                        <td class="project-state">
+                            <div class="badge badge-success">@project.Tickets.Count</div>
+                        </td>
+                        
+                        <td class="project-actions text-right">
+                                <a class="btn btn-primary btn-sm" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">
+                                    <i class="fas fa-folder">
+                                    </i>
+                                    View
+                                </a>
+                                <a class="btn btn-secondary btn-sm" data-toggle="popover" data-trigger="hover" data-content="@project.Description" data-placement="top" data-container="body">
+                                    <i class="far fa-eye">
+                                    </i>
+                                    Glance
+                                </a>
+                            @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
+                            {
+                                <br />
+                                <a class="btn btn-info btn-sm" asp-controller="Projects" asp-action="Edit" asp-route-id="@project.Id">
+                                    <i class="fas fa-pencil-alt">
+                                    </i>
+                                    Edit
+                                </a>
+                            }
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <a class="btn btn-danger btn-sm" asp-controller="Projects" asp-action="Delete" asp-route-id="@project.Id">
+                                    <i class="fas fa-trash">
+                                    </i>
+                                    Delete
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
     </div>
-</div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
+
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-secondary" asp-controller="Home" asp-action="Dashboard">Back to Dashboard</a>
 </div>

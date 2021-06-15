@@ -48,7 +48,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
-    <partial name="_LogoutPartial"/>
+    <partial name="_LogoutPartial" />
     <header>
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
@@ -185,7 +185,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="javascript:document.getElementById('logoutForm').submit();" >
+                    <a class="nav-link" href="javascript:document.getElementById('logoutForm').submit();">
                         <i class="fas fa-sign-out-alt"></i>
                     </a>
                 </li>
@@ -241,6 +241,7 @@
                     </div>
                     <div class="info">
                         <a asp-area="identity" asp-page="/Account/Manage/Index" class="d-block font-weight-bold">@user?.FullName </a>
+                        <div class="badge badge-info">@((await _roleService.ListUserRolesAsync(user)).First())</div>
                     </div>
                 </div>
 
@@ -260,7 +261,7 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
-    with font-awesome or any other icon font library -->
+                        with font-awesome or any other icon font library -->
                         <li class="nav-item menu-open">
                             <a href="#" class="nav-link active">
                                 <i class="nav-icon fas fa-tachometer-alt text-orange"></i>
@@ -404,42 +405,47 @@
     <!-- Bootstrap 4 -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <!--ChartJS-->
-    <script src="~/plugins/Chart.min.js"></script>
+    @*<script src="~/plugins/Chart.min.js"></script>*@
     <!--Sparkline-->
-    <script src="~/plugins/sparkline.js"></script>
+    @*<script src="~/plugins/sparkline.js"></script>*@
     <!-- JQVMap -->
-    <script src="~/plugins/jquery.vmap.min.js"></script>
-    <script src="~/plugins/jquery.vmap.usa.js"></script>
+    @*<script src="~/plugins/jquery.vmap.min.js"></script>
+        <script src="~/plugins/jquery.vmap.usa.js"></script>*@
     <!-- jQuery Knob Chart -->
-    <script src="~/plugins/jquery.knob.min.js"></script>
+    @*<script src="~/plugins/jquery.knob.min.js"></script>*@
     <!--daterangepicker-->
-    <script src="~/plugins/moment.min.js"></script>
-    <script src="~/plugins/daterangepicker.js"></script>
+    @*<script src="~/plugins/moment.min.js"></script>
+        <script src="~/plugins/daterangepicker.js"></script>*@
     <!-- Tempusdominus Bootstrap 4 -->
-    <script src="~/plugins/tempusdominus-bootstrap-4.min.js"></script>
+    @*<script src="~/plugins/tempusdominus-bootstrap-4.min.js"></script>*@
     <!-- Summernote -->
-    <script src="~/plugins/summernote-bs4.js"></script>
+    @*<script src="~/plugins/summernote-bs4.js"></script>*@
     <!-- overlayScrollbars -->
-    <script src="~/plugins/jquery.overlayScrollbars.min.js"></script>
-    <!-- AdminLTE App -->
-    <script src="~/plugins/adminlte.js"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="~/plugins/demo.js"></script>
-    <!-- AdminLTE dashboard demo -->
-    <script src="~/plugins/dashboard.js"></script>
+    @*<script src="~/plugins/jquery.overlayScrollbars.min.js"></script>*@
+
     <!--DataTables-->
     <script src="~/plugins/dataTables.bootstrap4.min.js"></script>
     <script src="~/plugins/responsive.bootstrap4.min.js"></script>
     <script src="~/plugins/buttons.bootstrap4.min.js"></script>
     <!--PAGE PLUGINS-->
     <!-- jQuery Mapael -->
-    <script src="~/plugins/jquery.mousewheel.js"></script>
-    <script src="~/plugins/raphael.min.js"></script>
-    <script src="~/plugins/jquery.mapael.min.js"></script>
-    <script src="~/plugins/usa_states.min.js"></script>
-
+    @*<script src="~/plugins/jquery.mousewheel.js"></script>
+        <script src="~/plugins/raphael.min.js"></script>
+        <script src="~/plugins/jquery.mapael.min.js"></script>
+        <script src="~/plugins/usa_states.min.js"></script>*@
+    <!-- AdminLTE App -->
+    <script src="~/plugins/adminlte.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/plugins/demo.js"></script>
+    <!-- AdminLTE dashboard demo -->
+    <script src="~/plugins/dashboard.js"></script>
     <script>
-/*        $(window).on("load", loadLight());*/
+        /*        $(window).on("load", loadLight());*/
+    </script>
+    <script>
+        $(function(){
+            $('[data-toggle="popover"]').popover()
+        })
     </script>
 
     <script src="~/js/site.js" asp-append-version="true"></script>

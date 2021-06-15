@@ -72,11 +72,13 @@ namespace SlickTicket.Controllers
         // GET: Invites/Create
         public async Task<IActionResult> Create()
         {
+            int companyId = User.Identity.GetCompanyId().Value;
+
             InviteViewModel model = new();
 
             if (User.IsInRole("Administrator"))
             {
-                model.ProjectList = new SelectList(_context.Project, "Id", "Name");
+                model.ProjectList = new SelectList(await _projectService.GetAllProjectsByCompany(companyId), "Id", "Name");
             }
             else if (User.IsInRole("ProjectManager"))
             {
@@ -101,10 +103,10 @@ namespace SlickTicket.Controllers
 
             var token = _dataProtector.Protect(guid.ToString());
             var email = _dataProtector.Protect(viewModel.Email);
-
+            var message = viewModel.Message;
             var callbackUrl = Url.Action("ProcessInvite", "Invites", new { token, email }, protocol: Request.Scheme);
 
-            var body = "Please join my Company." + Environment.NewLine + "Please click the following link to join <a href=\"" + callbackUrl + "\">COLLABORATE</a>";
+            var body = message + Environment.NewLine + "Please click the following link to join <a href=\"" + callbackUrl + "\">COLLABORATE</a>";
             var destination = viewModel.Email;
             var subject = "Company Invite";
 
