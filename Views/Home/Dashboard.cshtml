@@ -212,7 +212,7 @@
                                                     @foreach (var member in Model.Users)
                                                     {
                                                         <li>
-                                                            <img class="img-fluid img-circle img-bordered-sm" style="height: 60px; width: 60px" src="@_imageService.DecodeImage(member.AvatarFileData, member.AvatarContentType)" alt="@member.FullName"/>
+                                                            <img class="img-fluid img-circle img-bordered-sm" style="height: 60px; width: 60px" src="@_imageService.DecodeImage(member.AvatarFileData, member.AvatarContentType)" alt="@member.FullName" data-toggle="popover" data-trigger="hover" data-content="@((await _roleService.ListUserRolesAsync(member)).First())" data-placement="top" data-container="body"/>
                                                             <a class="users-list-name" href="#">@member.FullName</a>
                                                             <span class="users-list-date">@member.Projects.Count Projects</span>
                                                         </li>

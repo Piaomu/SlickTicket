@@ -1,8 +1,8 @@
 ﻿@using SlickTicket.Services.Interfaces
-@model SlickTicket.Models.ViewModels.ProjectDetailsViewModel
+@model SlickTicket.Models.Project
 @inject IBTProjectService _projectService
 @{
-    var projectManager = await _projectService.GetProjectManagerAsync(Model.Project.Id);
+    var projectManager = await _projectService.GetProjectManagerAsync(Model.Id);
     ViewData["Title"] = "Details";
 }
 
@@ -20,7 +20,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="breadcrumb-item active">Details | @Model.Project.Name</li>
+                        <li class="breadcrumb-item active">Details | @Model.Name</li>
                     </ol>
                 </div>
             </div>
@@ -33,7 +33,7 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Project: @Model.Project.Name</h3>
+                <h3 class="card-title">Project: @Model.Name</h3>
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -52,7 +52,7 @@
                                 <div class="info-box bg-light">
                                     <div class="info-box-content">
                                         <span class="info-box-text text-center text-muted">End Date</span>
-                                        <span class="info-box-number text-center text-muted mb-0">@Model.Project.EndDate</span>
+                                        <span class="info-box-number text-center text-muted mb-0">@Model.EndDate</span>
                                     </div>
                                 </div>
                             </div>
@@ -60,7 +60,7 @@
                                 <div class="info-box bg-light">
                                     <div class="info-box-content">
                                         <span class="info-box-text text-center text-muted">Priority</span>
-                                        <span class="info-box-number text-center text-muted mb-0">@Model.Project.ProjectPriority.Name</span>
+                                        <span class="info-box-number text-center text-muted mb-0">@Model.ProjectPriority.Name</span>
                                     </div>
                                 </div>
                             </div>
@@ -77,7 +77,7 @@
                             <div class="col-12">
                                 <h4>Members</h4>
                                 <div class="post">
-                                    @foreach (var member in Model.Project.Members)
+                                    @foreach (var member in Model.Members)
                                     {
                                         <div class="user-block">
                                             <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
@@ -92,55 +92,9 @@
                                             typographers and the like. Some people hate it and argue for
                                             its demise, but others ignore.
                                         </p>
-                                        @if (User.IsInRole("Administrator")) 
-                                        {
-                                        <!-- Button trigger modal -->
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                            Change Role
-                                        </button>
-                                        }
                                     }
                                     <p>
                                         <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
-                                    </p>
-                                </div>
-
-                                <div class="post clearfix">
-                                    <div class="user-block">
-                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user7-128x128.jpg" alt="User Image">
-                                        <span class="username">
-                                            <a href="#">Sarah Ross</a>
-                                        </span>
-                                        <span class="description">Sent you a message - 3 days ago</span>
-                                    </div>
-                                    <!-- /.user-block -->
-                                    <p>
-                                        Lorem ipsum represents a long-held tradition for designers,
-                                        typographers and the like. Some people hate it and argue for
-                                        its demise, but others ignore.
-                                    </p>
-                                    <p>
-                                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 2</a>
-                                    </p>
-                                </div>
-
-                                <div class="post">
-                                    <div class="user-block">
-                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
-                                        <span class="username">
-                                            <a href="#">Jonathan Burke Jr.</a>
-                                        </span>
-                                        <span class="description">Shared publicly - 5 days ago</span>
-                                    </div>
-                                    <!-- /.user-block -->
-                                    <p>
-                                        Lorem ipsum represents a long-held tradition for designers,
-                                        typographers and the like. Some people hate it and argue for
-                                        its demise, but others ignore.
-                                    </p>
-
-                                    <p>
-                                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v1</a>
                                     </p>
                                 </div>
                             </div>
@@ -148,7 +102,7 @@
                     </div>
                     <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
                         <h3 class="text-primary"><i class="fas fa-paint-brush"></i> Description</h3>
-                        <p class="text-muted">@Model.Project.Description</p>
+                        <p class="text-muted">@Model.Description</p>
                         <br>
                         <div class="text-muted">
                             <p class="text-sm">
@@ -181,7 +135,9 @@
                             </li>
                         </ul>
                         <div class="text-center mt-5 mb-3">
-                            <a href="#" class="btn btn-sm btn-primary">Add files</a>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">
+                                Add Ticket
+                            </button>
                             <a href="#" class="btn btn-sm btn-warning">Report contact</a>
                         </div>
                     </div>
@@ -196,22 +152,51 @@
 </div>
 <!-- /.content-wrapper -->
 
-<!--Roles Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!--Tickets Modal -->
+<div class="modal fade" id="newTicketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Change Member Role</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Add a New Ticket</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                
+                <form asp-controller="Tickets" asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label class="control-label">Title</label>
+                        <input name="Title" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input name="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Project</label>
+                            <select name="ProjectId" class="form-control" asp-items="ViewBag.ProjectId">
+                                <option>Select a project</option>
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Ticket Type</label>
+                        <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketStatusId">
+                            <option>Select a Type</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Ticket Priority</label>
+                        <select name="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId">
+                            <option>Choose Priority</option>
+                        </select>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="submit" value="Create" class="btn btn-primary">Create</button>
             </div>
         </div>
     </div>
@@ -219,6 +204,6 @@
 <!---/.Roles Modal-->
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Project.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
