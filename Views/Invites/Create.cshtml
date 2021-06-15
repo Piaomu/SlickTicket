@@ -4,8 +4,8 @@
     <div class="card custom-card">
         <div class="card-body">
             <div>
-                <h6 class="main-content-label mb-1">Horizonatal Form</h6>
-                <p class="text-muted card-sub-title">A form control layout using basic layout.</p>
+                <h6 class="main-content-label mb-1">Send an Invitation</h6>
+                <p class="text-muted card-sub-title">Please fill out the form to invite a team member to join your project.</p>
             </div>
             <form asp-action="Create">
                 <div class="row row-xs align-items-center mg-b-20">
@@ -37,7 +37,7 @@
                         <label class="mg-b-0">Select Project</label>
                     </div>
                     <div class="col-md-8 mg-t-5 mg-md-t-0">
-                        <select class="form-control" asp-for="ProjectId" asp-items="Model.ProjectList">
+                        <select class="form-control mt-2" asp-for="ProjectId" asp-items="Model.ProjectList">
                             <option value="">Select Project</option>
                         </select>
                     </div>
@@ -47,7 +47,7 @@
                         <label class="mg-b-0">Message</label>
                     </div>
                     <div class="col-md-8 mg-t-5 mg-md-t-0">
-                        <textarea asp-for="Message" multiple="multiple"></textarea>
+                        <textarea asp-for="Message" class="form-control bg-light mt-2 mb-2" rows="5" multiple="multiple" placeholder="Enter a message..."></textarea>
                     </div>
                 </div>
                 <div class="form-group row justify-content-end mb-0">
@@ -61,8 +61,6 @@
     </div>
 </div>
 
-
-}
 
 
 @section Scripts {

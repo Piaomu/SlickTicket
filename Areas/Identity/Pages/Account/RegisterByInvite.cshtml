@@ -16,7 +16,7 @@
                         <p class="lead">Create an account</p>
                     </div>
                     <div class="body">
-                        <form class="form-auth-small" method="post">
+                        <form class="form-auth-small" method="post" enctype="multipart/form-data">
                             <input hidden asp-for="Input.CompanyId" />
                             <input hidden asp-for="Input.ProjectId" />
                             <div class="form-group">
@@ -37,6 +37,13 @@
                             <div class="form-group">
                                 <label asp-for="Input.Company" class="control-label"></label>
                                 <input asp-for="Input.Company" class="form-control" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Input.ImageFile"></label>
+                                <div class="custom-file">
+                                    <input asp-for="Input.ImageFile" type="file" class="form-control-file custom-file-input" />
+                                    <label asp-for="Input.ImageFile" class="control-label custom-file-label">Choose</label>
+                                </div>
                             </div>
                             <hr />
                             <div class="form-group">

@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Http;
 
 namespace SlickTicket.Areas.Identity.Pages.Account
 {
@@ -27,6 +28,7 @@ namespace SlickTicket.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterByInviteModel> _logger;
         private readonly IBTInviteService _inviteService;
         private readonly IEmailSender _emailSender;
+        private readonly IImageService _imageService;
 
         public RegisterByInviteModel(
             UserManager<BTUser> userManager,
@@ -34,7 +36,8 @@ namespace SlickTicket.Areas.Identity.Pages.Account
             IBTProjectService projectService,
             ILogger<RegisterByInviteModel> logger,
             IBTInviteService inviteService,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IImageService imageService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -42,6 +45,7 @@ namespace SlickTicket.Areas.Identity.Pages.Account
             _logger = logger;
             _inviteService = inviteService;
             _emailSender = emailSender;
+            _imageService = imageService;
         }
 
         [BindProperty]
@@ -66,6 +70,8 @@ namespace SlickTicket.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
+            [Display(Name = "Custom Image")]
+            public IFormFile ImageFile { get; set; }
 
             [Display(Name = "Company")]
             public string Company { get; set; }
@@ -118,7 +124,10 @@ namespace SlickTicket.Areas.Identity.Pages.Account
                     LastName = Input.LastName,
                     UserName = Input.Email,
                     Email = Input.Email,
-                    CompanyId = Input.CompanyId
+                    CompanyId = Input.CompanyId,
+
+                    AvatarFileData = (await _imageService.EncodeImageAsync(Input.ImageFile)),
+                    AvatarContentType = _imageService.ContentType(Input.ImageFile)
                 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)

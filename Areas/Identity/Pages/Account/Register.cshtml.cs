@@ -7,6 +7,8 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using SlickTicket.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +16,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using SlickTicket.Models;
+using SlickTicket.Data;
 
 namespace SlickTicket.Areas.Identity.Pages.Account
 {
@@ -24,17 +27,27 @@ namespace SlickTicket.Areas.Identity.Pages.Account
         private readonly UserManager<BTUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IImageService _imageService;
+        private readonly ApplicationDbContext _context;
+        private readonly IBTRolesService _roleService;
 
         public RegisterModel(
             UserManager<BTUser> userManager,
             SignInManager<BTUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IImageService imageService,
+            ApplicationDbContext context,
+            IBTRolesService roleService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _imageService = imageService;
+            _context = context;
+            _roleService = roleService;
+
         }
 
         [BindProperty]
@@ -62,6 +75,9 @@ namespace SlickTicket.Areas.Identity.Pages.Account
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters.", MinimumLength = 2)]
             public string LastName { get; set; }
 
+            [Display(Name = "Custom Image")]
+            public IFormFile ImageFile { get; set; }
+
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
@@ -72,6 +88,20 @@ namespace SlickTicket.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "Company Name")]
+            public string CompanyName { get; set; }
+            [Required]
+            [Display(Name = "Description")]
+            public string Description { get; set; }
+
+
+            [Display(Name = "Company Image")]
+            public IFormFile CompanyImageFile { get; set; }
+            public byte[] CompanyImageArray { get; set; }
+            public string ContentType { get; set; }
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -86,17 +116,33 @@ namespace SlickTicket.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
+                var newCompany = new Company()
+                {
+                    Name = Input.CompanyName,
+                    Description = Input.Description,
+                    ImageFileData = (await _imageService.EncodeImageAsync(Input.CompanyImageFile)),
+                    ImageContentType = _imageService.ContentType(Input.CompanyImageFile)
+                };
+
+                await _context.AddAsync(newCompany);
+                await _context.SaveChangesAsync();
+
                 var user = new BTUser
                 {
-                    UserName = Input.Email, 
-                    Email = Input.Email, 
-                    FirstName = Input.FirstName, 
-                    LastName = Input.LastName 
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    CompanyId = newCompany.Id,
+
+                    AvatarFileData = (await _imageService.EncodeImageAsync(Input.ImageFile)),
+                    AvatarContentType = _imageService.ContentType(Input.ImageFile)
                 };
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
+                    await _roleService.AddUserToRoleAsync(user, "Administrator");
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

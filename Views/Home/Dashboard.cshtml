@@ -8,6 +8,7 @@
 @inject IBTProjectService _projectservice
 @inject IBTTicketService _ticketService
 @inject UserManager<BTUser> _userManager
+@inject IImageService _imageService
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -211,7 +212,7 @@
                                                     @foreach (var member in Model.Users)
                                                     {
                                                         <li>
-                                                            <img @*IMAGE SERVICE HERE*@ alt="User Image">
+                                                            <img class="img-fluid img-circle img-bordered-sm" style="height: 60px; width: 60px" src="@_imageService.DecodeImage(member.AvatarFileData, member.AvatarContentType)" alt="@member.FullName"/>
                                                             <a class="users-list-name" href="#">@member.FullName</a>
                                                             <span class="users-list-date">@member.Projects.Count Projects</span>
                                                         </li>

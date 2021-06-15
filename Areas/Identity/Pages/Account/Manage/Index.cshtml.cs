@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SlickTicket.Models;
+using SlickTicket.Services.Interfaces;
 
 namespace SlickTicket.Areas.Identity.Pages.Account.Manage
 {
@@ -14,16 +16,21 @@ namespace SlickTicket.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<BTUser> _userManager;
         private readonly SignInManager<BTUser> _signInManager;
+        private readonly IImageService _imageService;
 
         public IndexModel(
             UserManager<BTUser> userManager,
-            SignInManager<BTUser> signInManager)
+            SignInManager<BTUser> signInManager,
+            IImageService imageService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _imageService = imageService;
         }
 
         public string Username { get; set; }
+
+        public string CurrentImage { get; set; }
 
         [TempData]
         public string StatusMessage { get; set; }
@@ -44,6 +51,9 @@ namespace SlickTicket.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [Display(Name = "Custom Image")]
+            public IFormFile ImageFile { get; set; }
         }
 
         private async Task LoadAsync(BTUser user)
@@ -51,11 +61,15 @@ namespace SlickTicket.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
+
             Username = userName;
+            CurrentImage = _imageService.DecodeImage(user.AvatarFileData, user.AvatarContentType);
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                FirstName = user.FirstName,
+                LastName = user.LastName
             };
         }
 
@@ -109,6 +123,13 @@ namespace SlickTicket.Areas.Identity.Pages.Account.Manage
             }
 
             //Don't forget to manage IFormFile for avatar photo
+            if (Input.ImageFile is not null)
+            {
+                user.AvatarFileData = await _imageService.EncodeImageAsync(Input.ImageFile);
+                user.AvatarContentType = _imageService.ContentType(Input.ImageFile);
+                await _userManager.UpdateAsync(user);
+                
+            }
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";

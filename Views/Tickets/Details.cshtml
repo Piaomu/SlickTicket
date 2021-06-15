@@ -3,6 +3,7 @@
 
 @inject IBTProjectService _projectService 
 @inject IBTFileService BtFileService 
+@inject IImageService _imageService
 
 @{
     //var projectManager = await _projectService.GetProjectManagerAsync(Model.Id);
@@ -72,7 +73,7 @@
                             {
                                 <div class="post">
                                     <div class="user-block">
-                                        <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
+                                        <img class="img-circle img-bordered-sm" src="@_imageService.DecodeImage(comment.User.AvatarFileData, comment.User.AvatarContentType)" alt="user image">
                                         <span class="username">
                                             <a href="#">@comment.User.FullName</a>
                                         </span>
