@@ -1,6 +1,8 @@
 ﻿@using SlickTicket.Services.Interfaces
 @model SlickTicket.Models.Project
 @inject IBTProjectService _projectService
+@inject IImageService _imageService
+
 @{
     var projectManager = await _projectService.GetProjectManagerAsync(Model.Id);
     ViewData["Title"] = "Details";
@@ -80,18 +82,12 @@
                                     @foreach (var member in Model.Members)
                                     {
                                         <div class="user-block">
-                                            <img class="img-circle img-bordered-sm" src="../../dist/img/user1-128x128.jpg" alt="user image">
+                                            <img class="img-circle img-bordered-sm" src="@_imageService.DecodeImage(member.AvatarFileData, member.AvatarContentType)" alt="user image">
                                             <span class="username">
                                                 <a>@member.FullName</a>
                                             </span>
-                                            <span class="description">I am a member</span>
                                         </div>
                                         <!-- /.user-block -->
-                                        <p>
-                                            Lorem ipsum represents a long-held tradition for designers,
-                                            typographers and the like. Some people hate it and argue for
-                                            its demise, but others ignore.
-                                        </p>
                                     }
                                     <p>
                                         <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
@@ -111,34 +107,25 @@
                             </p>
                             <p class="text-sm">
                                 Project Manager
-                                @*What syntax can I use to return the full name of the BTUser that this method returns?*@
                                 <b class="d-block">@projectManager?.FullName</b>
                             </p>
                         </div>
 
-                        <h5 class="mt-5 text-muted">Project files</h5>
+                        <h5 class="mt-5 text-muted">Tickets</h5>
                         <ul class="list-unstyled">
+                            @foreach(Ticket ticket in Model.Tickets) {
                             <li>
-                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Functional-requirements.docx</a>
+                                <p class="text-black">@ticket.Title</p>
                             </li>
-                            <li>
-                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-pdf"></i> UAT.pdf</a>
-                            </li>
-                            <li>
-                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-envelope"></i> Email-from-flatbal.mln</a>
-                            </li>
-                            <li>
-                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-image "></i> Logo.png</a>
-                            </li>
-                            <li>
-                                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> Contract-10_12_2014.docx</a>
-                            </li>
+                            }
                         </ul>
                         <div class="text-center mt-5 mb-3">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">
                                 Add Ticket
                             </button>
-                            <a href="#" class="btn btn-sm btn-warning">Report contact</a>
+                            @if (User.IsInRole("Administrator")) {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">Edit Project</a>
+                            }
                         </div>
                     </div>
                 </div>
