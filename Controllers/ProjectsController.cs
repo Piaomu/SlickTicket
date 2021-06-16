@@ -84,11 +84,12 @@ namespace SlickTicket.Controllers
 
             ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Name");
 
-            var project = await _context.Project
-                            .Include(p => p.Members)
-                            .Include(p => p.Company)
-                            .Include(p => p.ProjectPriority)
-                            .FirstOrDefaultAsync(m => m.Id == id);
+            var companyId = User.Identity.GetCompanyId().Value;
+
+            var projects = await _projectService.GetAllProjectsByCompany(companyId);
+
+            var project = projects.FirstOrDefault(m => m.Id == id);
+
 
             var pm = await _projectService.GetProjectManagerAsync(project.Id);
 

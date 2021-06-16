@@ -106,7 +106,7 @@ namespace SlickTicket.Controllers
         {
             if (!ticketId.HasValue)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("CompanyTickets");
             }
 
             AssignDeveloperViewModel model = new();

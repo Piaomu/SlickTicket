@@ -149,8 +149,8 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <form asp-controller="Tickets" asp-action="Create" method="post">
+            <form asp-controller="Tickets" asp-action="Create" method="post">
+                <div class="modal-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
                         <label class="control-label">Title</label>
@@ -161,11 +161,8 @@
                         <input name="Description" class="form-control" />
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label">Project</label>
-                            <select name="ProjectId" class="form-control" asp-items="ViewBag.ProjectId">
-                                <option>Select a project</option>
-                            </select>
+                    <div>
+                        <input type="hidden" asp-for="@Model.Id" name="ProjectId" />
                     </div>
                     <div class="form-group">
                         <label class="control-label">Ticket Type</label>
@@ -179,12 +176,12 @@
                             <option>Choose Priority</option>
                         </select>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" value="Create" class="btn btn-primary">Create</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" value="Create" class="btn btn-primary">Create</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
