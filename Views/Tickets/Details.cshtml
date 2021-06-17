@@ -166,6 +166,20 @@
                         }
                     </div>
                        }
+                <div>
+                    <h5>Submitter</h5>
+                    <span>@Model.OwnerUser.FullName</span>
+                    <h5>Developer</h5>
+                    @if(Model.DeveloperUser is not null) {
+                    <span class="username">
+                        <p>@Model.DeveloperUser.FullName</p>
+                    </span>
+                    }
+                    else
+                    {
+                       <p>NOT ASSIGNED</p>
+                    }
+                </div>
                     <h5 class="mt-5 text-muted">Project files</h5>
                     <ul class="list-unstyled">
                         <div class="row clearfix">
