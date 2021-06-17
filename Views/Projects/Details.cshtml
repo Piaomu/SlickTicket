@@ -59,12 +59,43 @@
                                 </div>
                             </div>
                             <div class="col-12 col-sm-4">
-                                <div class="info-box bg-light">
-                                    <div class="info-box-content">
-                                        <span class="info-box-text text-center text-muted">Priority</span>
-                                        <span class="info-box-number text-center text-muted mb-0">@Model.ProjectPriority.Name</span>
+                                @if (Model.ProjectPriority.Name == "Urgent")
+                                {
+                                    <div class="info-box bg-red">
+                                        <div class="info-box-content">
+                                            <span class="info-box-text text-center">Priority</span>
+                                            <span class="info-box-number text-center mb-0">@Model.ProjectPriority.Name</span>
+                                        </div>
                                     </div>
-                                </div>
+                                }
+                                @if (Model.ProjectPriority.Name == "High")
+                                {
+                                    <div class="info-box bg-orange">
+                                        <div class="info-box-content">
+                                            <span class="info-box-text text-center">Priority</span>
+                                            <span class="info-box-number text-center mb-0">@Model.ProjectPriority.Name</span>
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.ProjectPriority.Name == "Medium")
+                                {
+                                    <div class="info-box bg-yellow">
+                                        <div class="info-box-content">
+                                            <span class="info-box-text text-center">Priority</span>
+                                            <span class="info-box-number text-center mb-0">@Model.ProjectPriority.Name</span>
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.ProjectPriority.Name == "Low")
+                                {
+                                    <div class="info-box bg-green">
+                                        <div class="info-box-content">
+                                            <span class="info-box-text text-center">Priority</span>
+                                            <span class="info-box-number text-center mb-0">@Model.ProjectPriority.Name</span>
+                                        </div>
+                                    </div>
+                                }
+
                             </div>
                             <div class="col-12 col-sm-4">
                                 <div class="info-box bg-light">
@@ -102,10 +133,6 @@
                         <br>
                         <div class="text-muted">
                             <p class="text-sm">
-                                Client Company
-                                <b class="d-block">Deveint Inc</b>
-                            </p>
-                            <p class="text-sm">
                                 Project Manager
                                 <b class="d-block">@projectManager?.FullName</b>
                             </p>
@@ -115,7 +142,7 @@
                         <ul class="list-unstyled">
                             @foreach(Ticket ticket in Model.Tickets) {
                             <li>
-                                <p class="text-black">@ticket.Title</p>
+                                <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-warning mb-1">@ticket.Title</a>
                             </li>
                             }
                         </ul>

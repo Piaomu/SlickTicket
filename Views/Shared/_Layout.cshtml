@@ -261,7 +261,7 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
-                        with font-awesome or any other icon font library -->
+    with font-awesome or any other icon font library -->
                         <li class="nav-item menu-open">
                             <a href="#" class="nav-link active">
                                 <i class="nav-icon fas fa-tachometer-alt text-orange"></i>
@@ -305,14 +305,17 @@
                                         <p>My Tickets</p>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a asp-controller="Tickets" asp-action="AssignTicket" class="nav-link">
-                                        <i class="nav-icon far fa-plus-square text-purple"></i>
-                                        <p>
-                                            Assign Tickets
-                                        </p>
-                                    </a>
-                                </li>
+                                @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
+                                {
+                                    <li class="nav-item">
+                                        <a asp-controller="Tickets" asp-action="AssignTicket" class="nav-link">
+                                            <i class="nav-icon far fa-plus-square text-purple"></i>
+                                            <p>
+                                                Assign Tickets
+                                            </p>
+                                        </a>
+                                    </li>
+                                }
                                 <li class="nav-item">
                                     <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link">
                                         <i class="far fa-circle nav-icon text-maroon"></i>
@@ -321,16 +324,16 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link active">
-                                <i class="nav-icon fas fa-tachometer-alt text-orange"></i>
-                                <p>Company Dashboard</p>
-                                <i class="right fas fa-angle-left"></i>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    @if (User.IsInRole("Administrator"))
-                                    {
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item">
+                                <a href="#" class="nav-link active">
+                                    <i class="nav-icon fas fa-tachometer-alt text-orange"></i>
+                                    <p>Company Dashboard</p>
+                                    <i class="right fas fa-angle-left"></i>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
                                         <a asp-controller="UserRoles" asp-action="ManageUserRoles" class="nav-link">
                                             <i class="fas fa-people-arrows nav-icon text-maroon"></i>
                                             <p>Manage Roles</p>
@@ -339,43 +342,44 @@
                                             <i class="fas fa-people-arrows nav-icon text-maroon"></i>
                                             <p>Invite a Member</p>
                                         </a>
-                                    }
-                                    <a asp-controller="Projects" asp-action="CompanyProjects" class="nav-link">
-                                        <i class="fas fa-briefcase nav-icon text-purple"></i>
-                                        <p>Company Projects</p>
-                                    </a>
-                                </li>
+
+                                        <a asp-controller="Projects" asp-action="CompanyProjects" class="nav-link">
+                                            <i class="fas fa-briefcase nav-icon text-purple"></i>
+                                            <p>Company Projects</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="Tickets" asp-action="CompanyTickets" class="nav-link">
+                                            <i class="fas fa-file-alt nav-icon text-cyan"></i>
+                                            <p>Company Tickets</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                            @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
+                            {
                                 <li class="nav-item">
-                                    <a asp-controller="Tickets" asp-action="CompanyTickets" class="nav-link">
-                                        <i class="fas fa-file-alt nav-icon text-cyan"></i>
-                                        <p>Company Tickets</p>
+                                    <a asp-controller="Projects" asp-action="Create" class="nav-link">
+                                        <i class="nav-icon far fa-plus-square text-purple"></i>
+                                        <p>
+                                            NEW Project
+                                            <span class="right badge badge-danger">New</span>
+                                        </p>
                                     </a>
                                 </li>
-                            </ul>
-                        </li>
-                        @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
-                        {
+                            }
+
                             <li class="nav-item">
-                                <a asp-controller="Projects" asp-action="Create" class="nav-link">
-                                    <i class="nav-icon far fa-plus-square text-purple"></i>
+                                <a asp-controller="Tickets" asp-action="Create" class="nav-link">
+                                    <i class="nav-icon far fa-plus-square text-cyan"></i>
                                     <p>
-                                        NEW Project
+                                        NEW Ticket
                                         <span class="right badge badge-danger">New</span>
                                     </p>
                                 </a>
                             </li>
-                        }
-
-                        <li class="nav-item">
-                            <a asp-controller="Tickets" asp-action="Create" class="nav-link">
-                                <i class="nav-icon far fa-plus-square text-cyan"></i>
-                                <p>
-                                    NEW Ticket
-                                    <span class="right badge badge-danger">New</span>
-                                </p>
-                            </a>
-                        </li>
-                    </ul>
+                        </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
             </div>
