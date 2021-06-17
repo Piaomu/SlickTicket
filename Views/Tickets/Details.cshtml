@@ -1,9 +1,12 @@
 ﻿@using SlickTicket.Services.Interfaces 
+@using Microsoft.AspNetCore.Identity 
 @model SlickTicket.Models.Ticket
 
 @inject IBTProjectService _projectService 
 @inject IBTFileService BtFileService 
 @inject IImageService _imageService
+@inject IBTTicketService _ticketService
+@inject UserManager<BTUser> _userManager
 
 @{
     //var projectManager = await _projectService.GetProjectManagerAsync(Model.Id);
@@ -17,48 +20,102 @@
 
     <!-- Default box -->
     <div class="card">
-        <div class="card-header">
-            <h1>Ticket Details</h1>
-            <h3 class="card-title">@Model.Title</h3>
-
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                    <i class="fas fa-times"></i>
-                </button>
+        @if (Model.Archived == true)
+        {
+            <div class="card-header">
+                <h1 class="text-muted">Ticket Details</h1>
+                <h3 class="card-title text-muted">
+                    @Model.Title
+                    <span class="btn btn-success texts-light">ARCHIVED</span>
+                </h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="card-header">
+                <h1>Ticket Details</h1>
+                <h3 class="card-title">
+                    @Model.Title</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        }
+
         <div class="card-body">
             <div class="row">
                 <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
-                    <div class="row">
-                        <div class="col-12 col-sm-4">
-                            <div class="info-box bg-light">
-                                <div class="info-box-content">
-                                    <span class="info-box-text text-center text-muted">Priority</span>
-                                    <span class="info-box-number text-center text-muted mb-0">@Model.TicketPriority.Name</span>
+                    @if (Model.Archived == true)
+                    {
+                        <div class="row">
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-success">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center texts-light">Priority</span>
+                                        <span class="info-box-number text-center texts-light mb-0">N/A</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-success">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center texts-light">Status</span>
+                                        <span class="info-box-number text-center texts-light mb-0">Complete</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-success">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center texts-light">Type</span>
+                                        <span class="info-box-number text-center texts-light mb-0">@Model.TicketType.Name</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-sm-4">
-                            <div class="info-box bg-light">
-                                <div class="info-box-content">
-                                    <span class="info-box-text text-center text-muted">Status</span>
-                                    <span class="info-box-number text-center text-muted mb-0">@Model.TicketStatus.Name</span>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center">Priority</span>
+                                        <span class="info-box-number text-center mb-0">@Model.TicketPriority.Name</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center">Status</span>
+                                        <span class="info-box-number text-center mb-0">@Model.TicketStatus.Name</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="info-box bg-light">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center">Type</span>
+                                        <span class="info-box-number text-center mb-0">@Model.TicketType.Name</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-sm-4">
-                            <div class="info-box bg-light">
-                                <div class="info-box-content">
-                                    <span class="info-box-text text-center text-muted">Type</span>
-                                    <span class="info-box-number text-center text-muted mb-0">@Model.TicketType.Name</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    }
                     <div class="row">
                         <div class="col-12">
                             <h4>Recent Activity</h4>
@@ -92,44 +149,50 @@
                     <h3 class="text-primary"><i class="fas fa-paint-brush"></i> Description</h3>
                     <p class="text-muted">@Model.Description</p>
                     <br>
+                    @if(User.IsInRole("Administrator") || User.IsInRole("ProjectManager") || User.IsInRole("Developer") && Model.DeveloperUser == (await _userManager.GetUserAsync(User))) {
                     <div class="text-muted">
-                        <p class="text-sm">
-                            Client Company
-                            <b class="d-block">Deveint Inc</b>
-                        </p>
-                        <p class="text-sm">
-                            Project Manager
-                            <b class="d-block">@*@projectManager?.FullName*@</b>
-                        </p>
-                    </div>
 
+                        @if (Model.Archived == false)
+                        {
+                            <a class="btn btn-success" asp-controller="Tickets" asp-action="ArchiveToggle" asp-route-id="@Model.Id">
+                                Archive Ticket
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-secondary" asp-controller="Tickets" asp-action="ArchiveToggle" asp-route-id="@Model.Id">
+                                Revert Archive Status
+                            </a>
+                        }
+                    </div>
+                       }
                     <h5 class="mt-5 text-muted">Project files</h5>
                     <ul class="list-unstyled">
                         <div class="row clearfix">
                             @foreach (TicketAttachment item in Model.Attachments)
                             {
-                        <div class="col-sm-2">
-                            <div class="card">
-                                <div class="file">
-                                    <a class="btn btn-icon btn-danger" asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
-                                        <div class="hover">
-                                            @*<button type="button" class="btn btn-icon btn-danger"> </button>*@
-                                                <i class="fa fa-trash"></i>
-                                           
+                                <div class="col-sm-2">
+                                    <div class="card">
+                                        <div class="file">
+                                            <a class="btn btn-icon btn-danger" asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
+                                                <div class="hover">
+                                                    @*<button type="button" class="btn btn-icon btn-danger"> </button>*@
+                                                    <i class="fa fa-trash"></i>
+
+                                                </div>
+                                                <div class="icon">
+                                                    <img src="@BtFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
+                                                </div>
+                                                <div class="file-name">
+                                                    <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
+                                                    <small>Size: @BtFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                                                </div>
+                                            </a>
                                         </div>
-                                        <div class="icon">
-                                            <img src="@BtFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
-                                        </div>
-                                        <div class="file-name">
-                                            <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
-                                            <small>Size: @BtFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>}
+                                    </div>
+                                </div>}
                         </div>
-                        </ul>
+                    </ul>
                     <div class="border-1 border-light">
                         <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>

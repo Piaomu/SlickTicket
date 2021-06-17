@@ -151,6 +151,25 @@ namespace SlickTicket.Controllers
             return RedirectToAction("Details", new { id = viewModel.Ticket.Id });
         }
 
+        public async Task<IActionResult> ArchiveToggle(int id)
+        {
+            var companyId = User.Identity.GetCompanyId().Value;
+            Ticket ticket = (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).FirstOrDefault(t => t.Id == id);
+
+            if(ticket.Archived == false)
+            {
+                ticket.Archived = true;
+            }
+            else
+            {
+                ticket.Archived = false;
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details",  new { id = ticket.Id });
+
+        }
+
+
         // GET: Tickets/Create
         public async Task<IActionResult> Create()
         {
@@ -175,6 +194,7 @@ namespace SlickTicket.Controllers
 
 
             ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name");
+
             return View();
         }
 
