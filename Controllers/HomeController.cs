@@ -106,7 +106,7 @@ namespace SlickTicket.Controllers
             List<TicketStatus> statuses = _context.TicketStatus.ToList();
 
             DonutViewModel chartData = new();
-            chartData.labels = tickets.Select(t => t.TicketPriority.Name).ToArray();
+            chartData.labels = tickets.Select(t => t.TicketStatus.Name).ToArray();
 
             List<SubData> dsArray = new();
             List<int> numberOfTickets = new();
@@ -114,7 +114,7 @@ namespace SlickTicket.Controllers
 
             foreach (TicketStatus status in statuses)
             {
-                numberOfTickets.Add(tickets.Where(t => t.TicketPriorityId == priority.Id).Count());
+                numberOfTickets.Add(tickets.Where(t => t.TicketStatusId == status.Id).Count());
 
                 // This code will randomly select a color for each element of the data 
                 Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
