@@ -1,4 +1,7 @@
 ﻿@model SlickTicket.Models.ViewModels.MyTicketsViewModel
+@using SlickTicket.Services
+@using X.PagedList
+@using X.PagedList.Mvc.Core
 
 @{
     ViewData["Title"] = "Index";
@@ -15,54 +18,60 @@
 
         @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager") || User.IsInRole("Developer"))
         {
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Developer Tickets</h3>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Developer Tickets</h3>
 
-                    <div class="card-tools">
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <!-- /.card-header -->
-
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-hover text-nowrap">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Created</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th>View</th>
-                                <th>Edit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (Ticket ticket in Model.DevTickets)
-                            {
-                                <tr>
-                                    <td>@ticket.Title</td>
-                                    <td>@ticket.Created</td>
-                                    <td>@ticket.TicketPriority.Name</td>
-                                    <td>@ticket.TicketStatus.Name</td>
-                                    <td><a class="btn btn-secondary" asp-action="Details" asp-route-id="@ticket.Id">View</a></td>
-                                    <td><a class="btn btn-info" asp-action="Edit" asp-route-id="@ticket.Id">Edit</a></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- /.card-body -->
             </div>
+            <!-- /.card-header -->
+
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Created</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>View</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Ticket ticket in Model.DevTickets)
+                        {
+                            <tr>
+                                <td>@ticket.Title</td>
+                                <td>@ticket.Created</td>
+                                <td>@ticket.TicketPriority.Name</td>
+                                <td>@ticket.TicketStatus.Name</td>
+                                <td><a class="btn btn-secondary" asp-action="Details" asp-route-id="@ticket.Id">View</a></td>
+                                <td><a class="btn btn-info" asp-action="Edit" asp-route-id="@ticket.Id">Edit</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col">
+                    Page @ViewBag.PageNumber of @ViewBag.TotalDevPages
+                    <br />
+                    @Html.PagedListPager((IPagedList)ViewBag.devTickets, page => Url.Action("MyTickets", new { page }))
+                </div>
+            </div>
+            <!-- /.card-body -->
+        </div>
         }
             <!-- /.card -->
         </div>
@@ -112,6 +121,13 @@
                         }
                     </tbody>
                 </table>
+            </div>
+            <div class="row">
+                <div class="col">
+                    Page @ViewBag.PageNumber of @ViewBag.TotalSubPages
+                    <br />
+                    @Html.PagedListPager((IPagedList)ViewBag.SubTickets, page => Url.Action("MyTickets", new { page }))
+                </div>
             </div>
             <!-- /.card-body -->
         </div>

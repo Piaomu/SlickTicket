@@ -13,6 +13,7 @@ using SlickTicket.Services;
 using SlickTicket.Services.Interfaces;
 using SlickTicket.Models.ViewModels;
 using System.IO;
+using X.PagedList;
 
 namespace SlickTicket.Controllers
 {
@@ -25,6 +26,7 @@ namespace SlickTicket.Controllers
         private readonly IBTHistoryService _historyService;
         private readonly IBTCompanyInfoService _infoService;
         private readonly IBTNotificationService _notificationService;
+        private readonly SearchService _searchService;
 
         public TicketsController(ApplicationDbContext context, 
                                  IBTTicketService ticketService, 
@@ -32,7 +34,8 @@ namespace SlickTicket.Controllers
                                  IBTProjectService projectService, 
                                  IBTHistoryService historyService,
                                  IBTCompanyInfoService infoService,
-                                 IBTNotificationService notificationService)
+                                 IBTNotificationService notificationService,
+                                 SearchService searchService)
         {
             _context = context;
             _ticketService = ticketService;
@@ -41,6 +44,7 @@ namespace SlickTicket.Controllers
             _historyService = historyService;
             _infoService = infoService;
             _notificationService = notificationService;
+            _searchService = searchService;
         }
 
         // GET: Tickets
@@ -169,6 +173,17 @@ namespace SlickTicket.Controllers
 
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SearchIndex(string searchString)
+        {
+            //I need a set of results stemming from this search string
+            var tickets = _searchService.SearchActiveContent(searchString);
+
+            return View("SearchIndex", await tickets.ToListAsync());
+
+        }
 
         // GET: Tickets/Create
         public async Task<IActionResult> Create()
@@ -389,18 +404,34 @@ namespace SlickTicket.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> MyTickets()
+        public async Task<IActionResult> MyTickets(int? page)
         {
+            var pageNumber = page ?? 1;
+            var pageSize = 5;
+
             var userId = _userManager.GetUserId(User);
             var devTickets = await _ticketService.GetAllTicketsByRoleAsync("Developer", userId);
             var subTickets = await _ticketService.GetAllTicketsByRoleAsync("Submitter", userId);
             var viewModel = new MyTicketsViewModel()
             {
-                DevTickets = devTickets,
-                SubTickets = subTickets
+                DevTickets = devTickets.OrderByDescending(t => t.Created).ToPagedList(pageNumber, pageSize),
+                SubTickets = subTickets.OrderByDescending(t => t.Created).ToPagedList(pageNumber, pageSize)
             };
 
-            return View(viewModel);
+            decimal totalDevPages = ((decimal)(viewModel.DevTickets.Count() / (decimal)pageSize));
+            decimal totalSubPages = ((decimal)(viewModel.SubTickets.Count() / (decimal)pageSize));
+            ViewBag.TotalDevPages = Math.Ceiling(totalDevPages);
+            ViewBag.TotalSubPages = Math.Ceiling(totalSubPages);
+
+            ViewBag.devTickets = viewModel.DevTickets;
+            ViewBag.subTickets = viewModel.SubTickets;
+            ViewBag.pageNumber = pageNumber;
+            
+            
+   
+
+
+            return View( viewModel);
             //string myId = (await _userManager.GetUserAsync(User)).Id;
             ////get companyId
             //int companyId = User.Identity.GetCompanyId().Value;

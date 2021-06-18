@@ -41,7 +41,7 @@ namespace SlickTicket.Services
         public IOrderedQueryable<Ticket> SearchArchivedContent(string searchString)
         {
             //Get an IQueryable that contains all of the Tickets in the event the user doesn't supply a searchString
-            var result = _context.Ticket.Where(t => t.Archived == false);
+            var result = _context.Ticket.Where(t => t.Archived == true);
 
             if (!string.IsNullOrEmpty(searchString))
             {
