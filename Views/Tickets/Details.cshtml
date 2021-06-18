@@ -120,28 +120,35 @@
                         <div class="col-12">
                             <h4>Recent Activity</h4>
                             <div class=" btn-sm btn-block">@Model.Comments.Count total Comment(s)</div>
-                            <form asp-action="Create" asp-controller="TicketComments" method="post">
-                                <input type="hidden" name="TicketId" value="@Model.Id" />
-                                <textarea class="form-control" name="Comment" rows="3" placeholder="Add a comment..."></textarea>
-                                <button class="btn btn-dark btn-block btn-small Oz" type="submit">Add Comment</button>
+                               @if (User.IsInRole("Administrator") ||
+                                    User.IsInRole("ProjectManager") ||
+                                    User.IsInRole("Developer") && await _ticketService.GetTicketDeveloperAsync(Model.Id) == (await _userManager.GetUserAsync(User)) ||
+                                    User.IsInRole("Submitter") && Model.OwnerUser == (await _userManager.GetUserAsync(User)))
+                                {
+                                <form asp-action="Create" asp-controller="TicketComments" method="post">
+                                    <input type="hidden" name="TicketId" value="@Model.Id" />
+                                    <textarea class="form-control" name="Comment" rows="3" placeholder="Add a comment..."></textarea>
+                                    <button class="btn btn-dark btn-block btn-small Oz" type="submit">Add Comment</button>
 
-                            </form>
-                            @foreach (var comment in Model.Comments)
-                            {
-                                <div class="post">
-                                    <div class="user-block">
-                                        <img class="img-circle img-bordered-sm" src="@_imageService.DecodeImage(comment.User.AvatarFileData, comment.User.AvatarContentType)" alt="user image">
-                                        <span class="username">
-                                            <a href="#">@comment.User.FullName</a>
-                                        </span>
-                                        <span class="description">Shared at - @comment.Created</span>
+                                </form>
+                                }
+                                @foreach (var comment in Model.Comments)
+                                {
+
+                                    <div class="post">
+                                        <div class="user-block">
+                                            <img class="img-circle img-bordered-sm" src="@_imageService.DecodeImage(comment.User.AvatarFileData, comment.User.AvatarContentType)" alt="user image">
+                                            <span class="username">
+                                                <a href="#">@comment.User.FullName</a>
+                                            </span>
+                                            <span class="description">Shared at - @comment.Created</span>
+                                        </div>
+                                        <!-- /.user-block -->
+                                        <p>
+                                            @Html.Raw(comment.Comment)
+                                        </p>
                                     </div>
-                                    <!-- /.user-block -->
-                                    <p>
-                                        @Html.Raw(comment.Comment)
-                                    </p>
-                                </div>
-                            }
+                                }
                         </div>
                     </div>
                 </div>

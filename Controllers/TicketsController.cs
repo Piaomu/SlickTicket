@@ -173,6 +173,11 @@ namespace SlickTicket.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SearchIndex(List<Ticket> tickets)
+        {
+            return View(tickets);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -181,7 +186,7 @@ namespace SlickTicket.Controllers
             //I need a set of results stemming from this search string
             var tickets = _searchService.SearchActiveContent(searchString);
 
-            return View("SearchIndex", await tickets.ToListAsync());
+            return View("SearchIndex", tickets);
 
         }
 

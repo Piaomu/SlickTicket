@@ -1,4 +1,5 @@
-﻿using SlickTicket.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SlickTicket.Data;
 using SlickTicket.Models;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,8 @@ namespace SlickTicket.Services
         {
             _context = context;
         }
-        public IOrderedQueryable<Ticket> SearchActiveContent(string searchString)
+        public async Task<IEnumerable<Ticket>> SearchActiveContent(string searchString)
         {
-            //Get an IQueryable that contains all of the Tickets in the event the user doesn't supply a searchString
             var result = _context.Ticket.Where(t => t.Archived == false);
 
             if (!string.IsNullOrEmpty(searchString))
@@ -33,14 +33,13 @@ namespace SlickTicket.Services
                                                                c.User.FullName.Contains(searchString)));
             }
 
-            return result.OrderByDescending(t => t.Created);
+            return await result.OrderByDescending(t => t.Created).ToListAsync();
 
 
         }
 
-        public IOrderedQueryable<Ticket> SearchArchivedContent(string searchString)
+        public async Task<IEnumerable<Ticket>> SearchArchivedContent(string searchString)
         {
-            //Get an IQueryable that contains all of the Tickets in the event the user doesn't supply a searchString
             var result = _context.Ticket.Where(t => t.Archived == true);
 
             if (!string.IsNullOrEmpty(searchString))
@@ -56,7 +55,7 @@ namespace SlickTicket.Services
                                                                c.User.FullName.Contains(searchString)));
             }
 
-            return result.OrderByDescending(t => t.Created);
+            return await result.OrderByDescending(t => t.Created).ToListAsync(); ;
 
 
         }
