@@ -155,7 +155,7 @@ namespace SlickTicket.Controllers
                 return NotFound();
             }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Id", project.ProjectPriorityId);
+            ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Name", project.ProjectPriorityId);
             return View(project);
         }
 

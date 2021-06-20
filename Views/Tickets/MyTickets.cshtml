@@ -30,8 +30,11 @@
                             <tr>
                                 <th>Title</th>
                                 <th>Created</th>
+                                <th>CreatedOrder</th>
                                 <th>Priority</th>
+                                <th>PriorityId</th>
                                 <th>Status</th>
+                                <th>StatusId</th>
                                 <th>View</th>
                                 <th>Edit</th>
                             </tr>
@@ -41,9 +44,12 @@
                             {
                                 <tr>
                                     <td>@ticket.Title</td>
-                                    <td>@ticket.Created</td>
+                                    <td>@string.Format("{0:MMM dd yyyy}", ticket.Created)</td>
+                                    <td>@(ticket.Created.ToUnixTimeSeconds())</td>
                                     <td>@ticket.TicketPriority.Name</td>
+                                    <td>@ticket.TicketPriority.Id</td>
                                     <td>@ticket.TicketStatus.Name</td>
+                                    <td>@ticket.TicketStatus.Id</td>
                                     <td><a class="btn btn-secondary" asp-action="Details" asp-route-id="@ticket.Id">View</a></td>
                                     <td><a class="btn btn-info" asp-action="Edit" asp-route-id="@ticket.Id">Edit</a></td>
                                 </tr>
@@ -70,8 +76,11 @@
                         <tr>
                             <th>Title</th>
                             <th>Created</th>
+                            <th>CreatedOrder</th>
                             <th>Priority</th>
+                            <th>PriorityId</th>
                             <th>Status</th>
+                            <th>StatusId</th>
                             <th>View</th>
                             <th>Edit</th>
                         </tr>
@@ -81,9 +90,12 @@
                         {
                             <tr>
                                 <td>@ticket.Title</td>
-                                <td>@ticket.Created</td>
+                                <td>@string.Format("{0:MMM dd yyyy}", ticket.Created)</td>
+                                <td>@(ticket.Created.ToUnixTimeSeconds())</td>
                                 <td>@ticket.TicketPriority.Name</td>
+                                <td>@ticket.TicketPriority.Id</td>
                                 <td>@ticket.TicketStatus.Name</td>
+                                <td>@ticket.TicketStatus.Id</td>
                                 <td><a class="btn btn-secondary" asp-action="Details" asp-route-id="@ticket.Id">View</a></td>
                                 <td><a class="btn btn-info" asp-action="Edit" asp-route-id="@ticket.Id">Edit</a></td>
                             </tr>
@@ -107,7 +119,13 @@
                 "ordering": true,
                 /*            "info": true,*/
                 "autoWidth": false,
-                "columnDefs": [{ searchable: false, target: 8 }]
+                columnDefs: [
+                    { targets: [2, 4, 6], visible: false },
+                    { "orderData": 2, targets: [1] },
+                    { "orderData": 4, targets: [3] },
+                    { "orderData": 6, targets: [5] },
+                    { targets: '_all', visible: true }
+                ]
                 /*            "responsive": true,*/
             });
         });
@@ -120,7 +138,13 @@
                 "ordering": true,
                 /*            "info": true,*/
                 "autoWidth": false,
-                "columnDefs": [{ searchable: false, target: 8 }]
+                columnDefs: [
+                    { targets: [2, 4, 6], visible: false },
+                    { "orderData": 2, targets: [1] },
+                    { "orderData": 4, targets: [3] },
+                    { "orderData": 6, targets: [5] },
+                    { targets: '_all', visible: true }
+                ]
                 /*            "responsive": true,*/
             });
         });
