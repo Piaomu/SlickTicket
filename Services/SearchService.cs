@@ -30,7 +30,8 @@ namespace SlickTicket.Services
                                            t.TicketType.Name.Contains(searchString) ||
                                            t.TicketStatus.Name.Contains(searchString) ||
                                            t.Comments.Any(c => c.Comment.Contains(searchString) ||
-                                                               c.User.FullName.Contains(searchString)));
+                                                               c.User.FirstName.Contains(searchString) ||
+                                                               c.User.LastName.Contains(searchString)));
             }
 
             return await result.OrderByDescending(t => t.Created).ToListAsync();

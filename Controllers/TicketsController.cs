@@ -174,7 +174,7 @@ namespace SlickTicket.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchIndex(List<Ticket> tickets)
+        public IActionResult SearchIndex(List<Ticket> tickets)
         {
             return View(tickets);
         }
@@ -184,7 +184,7 @@ namespace SlickTicket.Controllers
         public async Task<IActionResult> SearchIndex(string searchString)
         {
             //I need a set of results stemming from this search string
-            var tickets = _searchService.SearchActiveContent(searchString);
+            var tickets = await _searchService.SearchActiveContent(searchString);
 
             return View("SearchIndex", tickets);
 
@@ -295,12 +295,12 @@ namespace SlickTicket.Controllers
             {
                 return NotFound();
             }
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperUserId);
-            ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnerUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name", ticket.ProjectId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Id", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Id", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Id", ticket.TicketTypeId);
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompany(companyId), "Id", "Name", ticket.ProjectId);
+            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
 
@@ -397,14 +397,14 @@ namespace SlickTicket.Controllers
 
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, user.Id);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyTickets));
             }
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperUserId);
+            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Name", ticket.DeveloperUserId);
             ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnerUserId);
             ViewData["ProjectId"] = new SelectList(_context.Project, "Id", "Name", ticket.ProjectId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Id", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Id", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Id", ticket.TicketTypeId);
+            ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
 

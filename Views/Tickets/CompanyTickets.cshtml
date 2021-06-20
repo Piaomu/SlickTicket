@@ -111,19 +111,20 @@
 </div>
 
 
-@*@section ScriptsPartial {
+@section Scripts {
 <script>
     $(document).ready(function () {
         $('#companytickets').DataTable({
             "paging": true,
             "lengthChange": false,
-            "searching": false,
+            "searching": true,
             "ordering": true,
-            "info": true,
+/*            "info": true,*/
             "autoWidth": false,
-            "responsive": true,
+            "columnDefs": [{ searchable: false, target: 8}]
+/*            "responsive": true,*/
         });
     });
 </script>
-}*@ 
+}
 
