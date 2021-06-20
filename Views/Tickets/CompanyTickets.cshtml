@@ -19,18 +19,6 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">@Html.DisplayNameFor(model => model.DeveloperUser.Company.Name)</h3>
-
-                <div class="card-tools">
-                    <div class="input-group input-group-sm" style="width: 150px;">
-                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-default">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
             <!-- /.card-header -->
             <!-- Responsive Data Table-->
@@ -46,9 +34,13 @@
                                 <th>Title</th>
                                 <th>Description</th>
                                 <th>Created</th>
+                                <th>CreatedOrder</th>
                                 <th>Priority</th>
+                                <th>PriorityId</th>
                                 <th>Type</th>
+                                <th>TypeId</th>
                                 <th>Status</th>
+                                <th>StatusId</th>
                                 <th>Add Members</th>
                                 @if(User.IsInRole("Administrator") || User.IsInRole("ProjectManager")) {
                                 <th>Edit</th>
@@ -63,10 +55,14 @@
                             <tr>
                                 <td>@ticket.Title</td>
                                 <td>@ticket.Description</td>
-                                <td>@ticket.Created</td>
+                                <td>@string.Format("{0:MMM dd yyyy}", ticket.Created) </td>
+                                <td>@(ticket.Created.ToUnixTimeSeconds()) </td>
                                 <td>@ticket.TicketPriority.Name</td>
+                                <td>@ticket.TicketPriority.Id</td>
                                 <td>@ticket.TicketType.Name</td>
+                                <td>@ticket.TicketType.Id</td>
                                 <td>@ticket.TicketStatus.Name</td>
+                                <td>@ticket.TicketStatus.Id</td>
                                 <td>
                                     <a class="btn btn-light text-dark" asp-controller="Tickets" asp-action="AssignTicket" asp-route-ticketId="@ticket.Id">Assign</a>
                                 </td>
@@ -87,9 +83,13 @@
                                 <th>Title</th>
                                 <th>Description</th>
                                 <th>Created</th>
+                                <th>CreatedOrdered</th>
                                 <th>Priority</th>
+                                <th>PriorityId</th>
                                 <th>Type</th>
+                                <th>TypeId</th>
                                 <th>Status</th>
+                                <th>StatusId</th>
                                 <th>Add Members</th>
                                 @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
                                 {
@@ -121,7 +121,14 @@
             "ordering": true,
 /*            "info": true,*/
             "autoWidth": false,
-            "columnDefs": [{ searchable: false, target: 8}]
+            columnDefs: [
+                { targets: [3, 5, 7, 9], visible: false },
+                {"orderData": 3, targets: [2]},
+                { "orderData": 5, targets: [4]},
+                { "orderData": 7, targets: [6]},
+                { "orderData": 9, targets: [8]},
+                { targets: '_all', visible: true }
+            ]
 /*            "responsive": true,*/
         });
     });
