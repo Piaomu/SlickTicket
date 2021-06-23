@@ -50,11 +50,14 @@ namespace SlickTicket.Controllers
             var projects = await _projectService.GetAllProjectsByCompany(companyId);
             var tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
             var members = await _infoService.GetAllMembersAsync(companyId);
+            var company = _context.Company.FirstOrDefault(c => c.Id == companyId);
+            
             var viewModel = new DashboardViewModel()
             {
                 Projects = projects,
                 Tickets = tickets,
-                Users = members
+                Users = members,
+                Company = company
             };
 
             return View(viewModel);
