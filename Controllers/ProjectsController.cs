@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -68,6 +69,97 @@ namespace SlickTicket.Controllers
                 return NotFound();
             }
 
+            return View(model);
+        }
+
+        //GET: Assign Project Manager
+        [HttpGet]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> AssignPM(int id)
+        {
+            ProjectManagerViewModel model = new();
+
+            //Get company id
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            //Get the project
+            Project project = new();
+            try
+            {
+                List<Project> projects = await _projectService.GetAllProjectsByCompany(companyId);
+                project = projects.FirstOrDefault(p => p.Id == id);
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"*** ERROR *** - Error getting projects - {ex.Message}");
+                throw;
+            }
+            //Populate VM Project
+            model.Project = project;
+
+            //Multi-Select
+
+            //Get users = pm
+            List<BTUser> users = new();
+
+            try
+            {
+                List<BTUser> pm = await _infoService.GetMembersInRoleAsync(Roles.ProjectManager.ToString(), companyId);
+                users = pm;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"*** ERROR *** - Error getting users not on project - {ex.Message}");
+                throw;
+            }
+
+            //GET all members from the project
+            List<string> members = new();
+
+            try
+            {
+                if(project?.Members != null)
+                {
+                    members = project.Members.Select(m => m.Id).ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"*** ERROR *** - Error getting members on project - {ex.Message}");
+                throw;
+            }
+
+            // Add users to select in VM
+            BTUser currentPM = await _projectService.GetProjectManagerAsync(project.Id);
+            model.Users = new SelectList(users, "Id", "FullName", currentPM.Id);
+            model.SelectedUser = currentPM.Id;
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> AssignPM(ProjectManagerViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.SelectedUser != null)
+                {
+                    string selectedPM = model.SelectedUser;
+
+                    await _projectService.RemoveProjectManagerAsync(model.Project.Id);
+                    await _projectService.AddProjectManagerAsync(selectedPM, model.Project.Id);
+
+                    return RedirectToAction("Details", "Projects", new { id = model.Project.Id });
+                }
+                else
+                {
+                    // send an error message back
+                    //Use a sweet alert or something that works in the template and return it in the view.
+                }
+            }
             return View(model);
         }
 

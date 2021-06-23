@@ -22,47 +22,25 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                <label asp-for="Created" class="control-label"></label>
-                <input asp-for="Created" class="form-control" />
-                <span asp-validation-for="Created" class="text-danger"></span>
-            </div>*@
-            @*<div class="form-group">
-                <label asp-for="Updated" class="control-label"></label>
-                <input asp-for="Updated" class="form-control" />
-                <span asp-validation-for="Updated" class="text-danger"></span>
-            </div>*@
-            @*<div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Archived" /> @Html.DisplayNameFor(model => model.Archived)
-                </label>
-            </div>*@
-            @*<div class="form-group">
-                <label asp-for="ArchivedDate" class="control-label"></label>
-                <input asp-for="ArchivedDate" class="form-control" />
-                <span asp-validation-for="ArchivedDate" class="text-danger"></span>
-            </div>*@
+            @if (User.IsInRole("Administrator")) 
+            {
             <div class="form-group">
                 <label asp-for="ProjectId" class="control-label"></label>
                 <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId">
-                    <option>Select a project</option>
+                    <option value="" hidden>Select a project</option>
                 </select>
             </div>
-            @*<div class="form-group">
-                <label asp-for="StatusId" class="control-label"></label>
-                <input asp-for="StatusId" class="form-control" />
-                <span asp-validation-for="StatusId" class="text-danger"></span>
-            </div>*@
+            }
             <div class="form-group">
                 <label asp-for="TicketTypeId" class="control-label"></label>
                 <select asp-for="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId">
-                    <option>Select a Type</option>
+                    <option value="" hidden>Select a Type</option>
                 </select>
             </div>
             <div class="form-group">
                 <label asp-for="TicketPriorityId" class="control-label"></label>
                 <select asp-for="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId">
-                    <option>Choose Priority</option>
+                    <option value="" hidden>Choose Priority</option>
                 </select>
             </div>
             @*<div class="form-group">
@@ -85,7 +63,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Home "asp-action="Index">Return to Dashboard</a>
 </div>
 
 @section Scripts {
