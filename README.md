@@ -6,7 +6,7 @@
 ---
 
 ## Description
-Slick Ticket is a free-to-use, multi-tenet enterprise-grade issue tracking application.
+Slick Ticket is a free-to-use, multi-tenet, enterprise-grade issue tracking application.
 It is a solo project written in C# using Entity Framework and MVC architecture.
 
 
