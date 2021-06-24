@@ -9,7 +9,7 @@
 @inject UserManager<BTUser> _userManager
 
 @{
-    //var projectManager = await _projectService.GetProjectManagerAsync(Model.Id);
+
     ViewData["Title"] = "Ticket Details";
 }
 
@@ -116,124 +116,186 @@
                             </div>
                         </div>
                     }
-                    <div class="row">
-                        <div class="col-12">
-                            <h4>Recent Activity</h4>
-                            <div class=" btn-sm btn-block">@Model.Comments.Count total Comment(s)</div>
-                               @if (User.IsInRole("Administrator") ||
-                                    User.IsInRole("ProjectManager") ||
-                                    User.IsInRole("Developer") && await _ticketService.GetTicketDeveloperAsync(Model.Id) == (await _userManager.GetUserAsync(User)) ||
-                                    User.IsInRole("Submitter") && Model.OwnerUser == (await _userManager.GetUserAsync(User)))
-                                {
-                                <form asp-action="Create" asp-controller="TicketComments" method="post">
-                                    <input type="hidden" name="TicketId" value="@Model.Id" />
-                                    <textarea class="form-control" name="Comment" rows="3" placeholder="Add a comment..."></textarea>
-                                    <button class="btn btn-dark btn-block btn-small Oz" type="submit">Add Comment</button>
 
-                                </form>
-                                }
-                                @foreach (var comment in Model.Comments)
-                                {
 
-                                    <div class="post">
-                                        <div class="user-block">
-                                            <img class="img-circle img-bordered-sm" src="@_imageService.DecodeImage(comment.User.AvatarFileData, comment.User.AvatarContentType)" alt="user image">
-                                            <span class="username">
-                                                <a href="#">@comment.User.FullName</a>
-                                            </span>
-                                            <span class="description">Shared at - @comment.Created</span>
-                                        </div>
-                                        <!-- /.user-block -->
-                                        <p>
-                                            @Html.Raw(comment.Comment)
-                                        </p>
+                        <div class="col-lg-8 col-12">
+                            <!-- DIRECT CHAT -->
+                            <div class="card direct-chat direct-chat-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">Comments</h3>
+
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <!-- Conversations are loaded here -->
+                                    <div class="direct-chat-messages">
+
+                                        @foreach (var comment in Model.Comments)
+                                        {
+
+
+                                            @if (!ViewData["CurrentUserId"].Equals(comment.UserId))
+                                            {
+                                                <!--CURRENT USER-->
+                                                <!-- Message. Default to the left -->
+                                                <div class="direct-chat-msg">
+                                                    <div class="direct-chat-infos clearfix">
+                                                        <span class="direct-chat-name float-left">@comment.User.FullName</span>
+                                                        <span class="direct-chat-timestamp float-right">@comment.Created.ToString("MMM dd, yyyy")</span>
+                                                    </div>
+                                                    <!-- /.direct-chat-infos -->
+                                                    <img class="direct-chat-img" src=@_imageService.DecodeImage(comment.User.AvatarFileData, comment.User.AvatarContentType) alt="Avatar">
+                                                    <!-- /.direct-chat-img -->
+                                                    <div class="direct-chat-text">
+                                                        @comment.Comment
+                                                    </div>
+                                                    <!-- /.direct-chat-text -->
+                                                </div>
+                                                <!-- /.direct-chat-msg -->
+                                            }
+                                            else
+                                            {
+                                                <!--OTHER USER-->
+                                                <!-- Message to the right -->
+                                                <div class="direct-chat-msg right">
+                                                    <div class="direct-chat-infos clearfix">
+                                                        <span class="direct-chat-name float-right">@comment.User.FullName</span>
+                                                        <span class="direct-chat-timestamp float-left">@comment.Created.ToString("MMM dd, yyyy")</span>
+                                                    </div>
+                                                    <!-- /.direct-chat-infos -->
+                                                    <img class="direct-chat-img" src=@_imageService.DecodeImage(comment.User.AvatarFileData, comment.User.AvatarContentType) alt="Avatar">
+                                                    <!-- /.direct-chat-img -->
+                                                    <div class="direct-chat-text">
+                                                        @comment.Comment
+                                                    </div>
+                                                    <!-- /.direct-chat-text -->
+                                                </div>
+                                                <!-- /.direct-chat-msg -->
+                                            }
+
+                                        }
+                                    </div>
+                                </div>
+                                @if (User.IsInRole("Administrator") ||
+                                     User.IsInRole("ProjectManager") ||
+                                     User.IsInRole("Developer") && await _ticketService.GetTicketDeveloperAsync(Model.Id) == (await _userManager.GetUserAsync(User)) ||
+                                     User.IsInRole("Submitter") && Model.OwnerUser == (await _userManager.GetUserAsync(User)))
+                                {
+                                    <!--Card Footer-->
+                                    <div class="card-footer">
+                                        <form asp-action="Create" asp-controller="TicketComments" method="post">
+                                            <div class="input-group">
+                                                <input type="text" name="Comment"  placeholder="Type Message ..." class="form-control">
+                                                <input type="hidden" name="TicketId" value="@Model.Id" placeholder="Type Message ..." class="form-control">
+                                                <span class="input-group-append">
+                                                    <button type="submit" class="btn btn-primary">Send</button>
+                                                </span>
+                                            </div>
+                                        </form>
                                     </div>
                                 }
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
-                    <h3 class="text-primary"><i class="fas fa-paint-brush"></i> Description</h3>
-                    <p class="text-muted">@Model.Description</p>
-                    <br>
-                    @if(User.IsInRole("Administrator") || User.IsInRole("ProjectManager") || User.IsInRole("Developer") && Model.DeveloperUser == (await _userManager.GetUserAsync(User))) {
-                    <div class="text-muted">
-
-                        @if (Model.Archived == false)
-                        {
-                            <a class="btn btn-success" asp-controller="Tickets" asp-action="ArchiveToggle" asp-route-id="@Model.Id">
-                                Archive Ticket
-                            </a>
-                        }
-                        else
-                        {
-                            <a class="btn btn-secondary" asp-controller="Tickets" asp-action="ArchiveToggle" asp-route-id="@Model.Id">
-                                Revert Archive Status
-                            </a>
-                        }
-                    </div>
-                       }
-                <div>
-                    <h5>Submitter</h5>
-                    <span>@Model.OwnerUser.FullName</span>
-                    <h5>Developer</h5>
-                    @if(Model.DeveloperUser is not null) {
-                    <span class="username">
-                        <p>@Model.DeveloperUser.FullName</p>
-                    </span>
-                    }
-                    else
-                    {
-                       <p>NOT ASSIGNED</p>
-                    }
-                </div>
-                    <h5 class="mt-5 text-muted">Project files</h5>
-                    <ul class="list-unstyled">
-                        <div class="row clearfix">
-                            @foreach (TicketAttachment item in Model.Attachments)
-                            {
-                                <div class="col-sm-2">
-                                    <div class="card">
-                                        <div class="file">
-                                            <a class="btn btn-icon btn-danger" asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
-                                                <div class="hover">
-                                                    @*<button type="button" class="btn btn-icon btn-danger"> </button>*@
-                                                    <i class="fa fa-trash"></i>
-
-                                                </div>
-                                                <div class="icon">
-                                                    <img src="@BtFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
-                                                </div>
-                                                <div class="file-name">
-                                                    <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
-                                                    <small>Size: @BtFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>}
-                        </div>
-                    </ul>
-                    <div class="border-1 border-light">
-                        <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <input type="hidden" asp-for="@Model.Id" name="TicketId">
-
-
-                            <div class="media-body ml-3">
-                                <label class="form-label d-block mb-2">Add Attachment</label>
-                                <label>
-                                    Description
-                                    <input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" />
-                                </label><br />
-                                <label class="btn btn-outline-primary btn-sm">
-                                    <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" />
-                                </label>
-                                <button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
                             </div>
-                        </form>
-                    </div>
-                </div>
+                        </div>
+                        <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+                            <h3 class="text-primary"><i class="fas fa-paint-brush"></i> Description</h3>
+                            <p class="text-muted">@Model.Description</p>
+                            <br>
+                            @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager") || User.IsInRole("Developer") && Model.DeveloperUser == (await _userManager.GetUserAsync(User)))
+                            {
+                                <div class="text-muted">
+
+                                    @if (Model.Archived == false)
+                                    {
+                                        <a class="btn btn-success" asp-controller="Tickets" asp-action="ArchiveToggle" asp-route-id="@Model.Id">
+                                            Archive Ticket
+                                        </a>
+                                        <a class="btn btn-info" asp-controller="Tickets" asp-action="AssignTicket" asp-route-ticketId="@Model.Id">
+                                            Assign Developer
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-secondary" asp-controller="Tickets" asp-action="ArchiveToggle" asp-route-id="@Model.Id">
+                                            Revert Archive Status
+                                        </a>
+                                    }
+                                </div>
+                            }
+
+                            <div>
+                                <h5>Submitter</h5>
+                                <span>@Model.OwnerUser.FullName</span>
+                                <h5>Developer</h5>
+                                @if (Model.DeveloperUser is not null)
+                                {
+                                    <span class="username">
+                                        <p>@Model.DeveloperUser.FullName</p>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <p>NOT ASSIGNED</p>
+                                }
+                            </div>
+                            <div>
+                                <h5 class="mt-5 text-muted">Project files</h5>
+                                <ul class="list-unstyled">
+                                    <div class="row clearfix">
+                                        @foreach (TicketAttachment item in Model.Attachments)
+                                        {
+                                            <div class="col-sm-2">
+                                                <div class="card">
+                                                    <div class="file">
+                                                        <a class="btn btn-icon btn-danger" asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
+                                                            <div class="hover">
+                                                                @*<button type="button" class="btn btn-icon btn-danger"> </button>*@
+                                                                <i class="fa fa-trash"></i>
+
+                                                            </div>
+                                                            <div class="icon">
+                                                                <img src="@BtFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
+                                                            </div>
+                                                            <div class="file-name">
+                                                                <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
+                                                                <small>Size: @BtFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </ul>
+                                <div class="border-1 border-light">
+                                    <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
+                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                        <input type="hidden" asp-for="@Model.Id" name="TicketId">
+
+
+                                        <div class="media-body ml-3">
+                                            <label class="form-label d-block mb-2">Add Attachment</label>
+                                            <label>
+                                                Description
+                                                <input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" />
+                                            </label><br />
+                                            <label class="btn btn-outline-primary btn-sm">
+                                                <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" />
+                                            </label>
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
             </div>
         </div>
         <!-- /.card-body -->
@@ -244,5 +306,5 @@
 
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Dashboard" asp-controller="Home">Back to Dashboard</a>
 </div>

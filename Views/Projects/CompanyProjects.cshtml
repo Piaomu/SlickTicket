@@ -54,11 +54,11 @@
                             </a>
                             <br />
                             <small>
-                                <span class="text-green text-bold">Starts</span>  @project.StartDate
+                                <span class="text-green text-bold">Starts</span>  @string.Format("{0:MMM dd yyyy}",project.StartDate)
                             </small>
                             <br />
                             <small>
-                                <span class="text-red text-bold">Ends</span> @project.EndDate
+                                <span class="text-red text-bold">Ends</span> @string.Format("{0:MMM dd yyyy}",project.EndDate)
                             </small>
                         </td>
                         <td>

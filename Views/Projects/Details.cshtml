@@ -54,7 +54,7 @@
                                 <div class="info-box bg-light">
                                     <div class="info-box-content">
                                         <span class="info-box-text text-center text-muted">End Date</span>
-                                        <span class="info-box-number text-center text-muted mb-0">@Model.EndDate</span>
+                                        <span class="info-box-number text-center text-muted mb-0">@string.Format("{0:MMM dd yyyy}", Model.EndDate)</span>
                                     </div>
                                 </div>
                             </div>
@@ -120,9 +120,6 @@
                                         </div>
                                         <!-- /.user-block -->
                                     }
-                                    <p>
-                                        <a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v2</a>
-                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -136,28 +133,49 @@
                                 Project Manager
                                 <b class="d-block">@projectManager?.FullName</b>
                             </p>
-                            @if (User.IsInRole("Administrator")) {
-                            <div>
-                                <a asp-action="AssignPM" asp-route-id="@Model.Id" class="btn btn-secondary">Assign a Project Manager</a>
-                            </div>
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <div>
+                                    <a asp-action="AssignPM" asp-route-id="@Model.Id" class="btn btn-light">Assign a Project Manager</a>
+                                </div>
                             }
                         </div>
 
+                        <br />
 
-                        <h5 class="mt-5 text-muted">Tickets</h5>
-                        <ul class="list-unstyled">
-                            @foreach (Ticket ticket in Model.Tickets) {
-                            <li>
-                                <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="btn btn-warning mb-1">@ticket.Title</a>
-                            </li>
-                            }
-                        </ul>
+                            <div class="card card-cyan">
+                                <div class="card-header">
+                                    <h3 class="card-title">Tickets</h3>
+
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <!-- /.card-tools -->
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        @foreach (Ticket ticket in Model.Tickets)
+                                        {
+                                            <li>
+                                                <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white">@ticket.Title</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+
                         <div class="text-center mt-5 mb-3">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">
                                 Add Ticket
                             </button>
-                            @if (User.IsInRole("Administrator")) {
-                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">Edit Project</a>
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">Edit Project</a>
                             }
                         </div>
                     </div>
@@ -222,5 +240,5 @@
 
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Dashboard" asp-controller="Home">Back to Dashboard</a>
 </div>

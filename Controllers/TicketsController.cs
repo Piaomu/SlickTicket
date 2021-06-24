@@ -72,20 +72,10 @@ namespace SlickTicket.Controllers
             }
 
             var companyId = User.Identity.GetCompanyId().Value;
-            Ticket model = (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).FirstOrDefault(t => t.Id == id);
-            //await _context.Ticket
-            //    .Include(t => t.DeveloperUser)
-            //    .Include(t => t.OwnerUser)
-            //    .Include(t => t.Project)
-            //    .Include(t => t.TicketPriority)
-            //    .Include(t => t.TicketStatus)
-            //    .Include(t => t.TicketType)
-            //    .Include(t => t.Attachments)
-            //    .Include(t => t.History)
-            //    .Include(t => t.Comments)
-            //    .Include(t => t.Notifications)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
 
+            Ticket model = (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).FirstOrDefault(t => t.Id == id);
+
+            ViewData["CurrentUserId"] = _userManager.GetUserId(User);
             if (model == null)
             {
                 return NotFound();

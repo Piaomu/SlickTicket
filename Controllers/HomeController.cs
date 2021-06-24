@@ -63,6 +63,7 @@ namespace SlickTicket.Controllers
             return View(viewModel);
         }
 
+
         public async Task<JsonResult> DonutMethod()
         {
             int companyId = User.Identity.GetCompanyId().Value;

@@ -93,7 +93,7 @@
             <!-- /.col -->
 
             <div class="col-12 col-sm-6 col-md-3">
-                <div class="small-box bg-secondary">
+                <div class="small-box bg-orange">
                     <div class="inner">
                         <h4>@Model.Company.Name</h4>
                         <p>Company</p>
@@ -117,7 +117,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <!-- DONUT CHART -->
-                    <div class="card card-danger">
+                    <div class="card card-secondary">
                         <div class="card-header">
                             <h3 class="card-title">Company Ticket Distribution</h3>
                         </div>
@@ -129,7 +129,7 @@
                 </div>
                 <div class="col-md-6">
                     <!-- DONUT CHART -->
-                    <div class="card card-danger">
+                    <div class="card card-secondary">
                         <div class="card-header">
                             <h3 class="card-title">Ticket Status</h3>
                         </div>
@@ -153,18 +153,6 @@
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
                         </button>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                                <i class="fas fa-wrench"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                <a href="#" class="dropdown-item">Action</a>
-                                <a href="#" class="dropdown-item">Another action</a>
-                                <a href="#" class="dropdown-item">Something else here</a>
-                                <a class="dropdown-divider"></a>
-                                <a href="#" class="dropdown-item">Separated link</a>
-                            </div>
-                        </div>
                         <button type="button" class="btn btn-tool" data-card-widget="remove">
                             <i class="fas fa-times"></i>
                         </button>
@@ -196,8 +184,8 @@
                                             <td>
                                                 @project.Description
                                             </td>
-                                            <td>@project.StartDate</td>
-                                            <td>@project.EndDate</td>
+                                            <td>@string.Format("{0:MMM dd yyyy}",project.StartDate)</td>
+                                            <td>@string.Format("{0:MMM dd yyyy}", project.EndDate)</td>
                                             <td>@project.ProjectPriority.Name</td>
                                             @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
                                             {

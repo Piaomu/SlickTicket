@@ -67,6 +67,8 @@ namespace SlickTicket.Controllers
             }
             ViewData["TicketId"] = new SelectList(_context.Ticket, "Id", "Description", ticketComment.TicketId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketComment.UserId);
+            ViewData["CurrentUserId"] = ticketComment.UserId;
+
             return View(ticketComment);
         }
 
