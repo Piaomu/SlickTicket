@@ -7,10 +7,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>My Tickets</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-info" asp-action="Create">Create New</a>
 </p>
 
 <div class="row">
@@ -18,6 +18,23 @@
 
         @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager") || User.IsInRole("Developer"))
         {
+            if (!Model.DevTickets.Any()) 
+            { 
+                //If user has no developer tickets assigned to them
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Developer Tickets</h3>
+                </div>
+                <div class="card-body">
+                    <h4>You don't have any Developer tickets assigned to you yet!</h4>
+                </div>
+            </div>
+
+            }
+            else
+            {
+
+
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Developer Tickets</h3>
@@ -59,6 +76,7 @@
                 </div>
                 <!-- /.card-body -->
             </div>
+            }
         }
         <!-- /.card -->
     </div>
@@ -69,6 +87,16 @@
             <div class="card-header">
                 <h3 class="card-title">My Submitted Tickets</h3>
             </div>
+
+            @if (!Model.SubTickets.Any())
+            {
+            //If user has not created any tickets
+                <div class="card-body">
+                    <h4>You haven't submitted any tickets yet!</h4>
+                </div>
+            }
+            else
+            {
             <!-- /.card-header -->
             <div class="card-body table-responsive p-0">
                 <table class="table table-hover text-nowrap" id="subtickets">
@@ -103,6 +131,7 @@
                     </tbody>
                 </table>
             </div>
+            }
             <!-- /.card-body -->
         </div>
         <!-- /.card -->

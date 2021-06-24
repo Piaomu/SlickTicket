@@ -1,6 +1,5 @@
 ﻿@model IEnumerable<SlickTicket.Models.Ticket>
 @using SlickTicket.Services.Interfaces
-@using SlickTicket.Extensions 
 @using Microsoft.AspNetCore.Identity 
 @inject IBTCompanyInfoService _infoService
 @inject IBTTicketService _ticketService
@@ -73,7 +72,7 @@
                                 </td>
                                 }
                                 <td><a class="btn btn-success text-dark"  asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">Details</a></td>
-                                <td>@((await _projectService.GetProjectManagerAsync(ticket.Project.Id)).FullName)</td>
+                                <td>@((await _projectService.GetProjectManagerAsync(ticket.Project.Id))?.FullName)</td>
                             </tr>
                             }
 
