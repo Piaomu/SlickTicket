@@ -102,10 +102,21 @@
                     <div class="image">
                         <img style="height: 40px; width: 40px;" src="@_imageService.DecodeImage(user.AvatarFileData, user.AvatarContentType)" class="img-circle elevation-2" alt="User Image">
                     </div>
-                    <div class="info">
-                        <a asp-area="identity" asp-page="/Account/Manage/Index" class="d-block font-weight-bold">@user?.FullName </a>
-                        <div class="badge badge-info">@((await _roleService.ListUserRolesAsync(user)).First())</div>
-                    </div>
+                    @if (!User.IsInRole("DemoUser"))
+                    {
+                        <div class="info">
+                            <a asp-area="identity" asp-page="/Account/Manage/Index" class="d-block font-weight-bold">@user?.FullName </a>
+                            <div class="badge badge-info">@((await _roleService.ListUserRolesAsync(user)).First())</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info">
+                            <a href="#" class="d-block font-weight-bold">@user?.FullName </a>
+                            <div class="badge badge-info">@((await _roleService.ListUserRolesAsync(user)).First())</div>
+                            <p class="text-danger">Please register a user to manage your account</p>
+                        </div>
+                    }
                 </div>
 
                 <!-- Sidebar Menu -->
@@ -167,12 +178,14 @@
                                         </a>
                                     </li>
                                 }
+                                @if (!User.IsInRole("DemoUser")) {
                                 <li class="nav-item">
                                     <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link">
                                         <i class="far fa-circle nav-icon text-maroon"></i>
                                         <p>My Account</p>
                                     </a>
                                 </li>
+                                }
                             </ul>
                         </li>
                         @if (User.IsInRole("Administrator"))
