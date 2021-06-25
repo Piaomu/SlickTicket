@@ -131,8 +131,8 @@ namespace SlickTicket.Controllers
 
             // Add users to select in VM
             BTUser currentPM = await _projectService.GetProjectManagerAsync(project.Id);
-            model.Users = new SelectList(users, "Id", "FullName", currentPM.Id);
-            model.SelectedUser = currentPM.Id;
+            model.Users = new SelectList(users, "Id", "FullName", currentPM?.Id);
+            model.SelectedUser = currentPM?.Id;
 
             return View(model);
         }

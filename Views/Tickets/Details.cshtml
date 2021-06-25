@@ -258,7 +258,7 @@
                         <br />
                         <div>
                             <h5>Submitter</h5>
-                            <span>@Model.OwnerUser.FullName</span>
+                            <span>@Model.OwnerUser?.FullName</span>
                             <h5>Developer</h5>
                             @if (Model.DeveloperUser is not null)
                             {
