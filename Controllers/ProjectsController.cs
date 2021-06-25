@@ -44,6 +44,7 @@ namespace SlickTicket.Controllers
 
         //Company Projects
         [HttpGet]
+        [Authorize(Roles = "Administrator, ProjectManager, Developer")]
         public async Task<IActionResult> CompanyProjects(int? id)
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -59,6 +60,7 @@ namespace SlickTicket.Controllers
 
         //My Projects
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> MyProjects()
         {
             var myId = (await _userManager.GetUserAsync(User)).Id;
@@ -164,6 +166,7 @@ namespace SlickTicket.Controllers
         }
 
         // GET: Projects/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -201,7 +204,7 @@ namespace SlickTicket.Controllers
         }
 
         // GET: Projects/Create
-        [Authorize(Roles = "Administrator, Project Manager")]
+        [Authorize(Roles = "Administrator, ProjectManager")]
         public IActionResult Create()
         {
 
@@ -232,7 +235,7 @@ namespace SlickTicket.Controllers
             return View(project);
         }
 
-        [Authorize(Roles = "Administrator, Project Manager")]
+        [Authorize(Roles = "Administrator, ProjectManager")]
         // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -289,8 +292,9 @@ namespace SlickTicket.Controllers
         }
 
 
-        //Authorize Roles, Administrator, ProjectManager
+
         [HttpGet]
+        [Authorize(Roles = "Administrator, ProjectManager")]
         public async Task<IActionResult> AssignUsers(int id)
         {
             ProjectMembersViewModel model = new();
@@ -312,6 +316,7 @@ namespace SlickTicket.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, ProjectManager")]
         public async Task<IActionResult> AssignUsers(ProjectMembersViewModel model)
         {
             if (ModelState.IsValid)
@@ -343,6 +348,7 @@ namespace SlickTicket.Controllers
 
 
         // GET: Projects/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

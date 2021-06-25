@@ -35,7 +35,7 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Project: @Model.Name</h3>
+                <h1 class="card-title">@Model.Name</h1>
 
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -143,31 +143,31 @@
 
                         <br />
 
-                            <div class="card card-cyan">
-                                <div class="card-header">
-                                    <h3 class="card-title">Tickets</h3>
+                        <div class="card card-cyan">
+                            <div class="card-header">
+                                <h3 class="card-title">Tickets</h3>
 
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <!-- /.card-tools -->
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
                                 </div>
-                                <!-- /.card-header -->
-                                <div class="card-body">
-                                    <ul class="list-unstyled">
-                                        @foreach (Ticket ticket in Model.Tickets)
-                                        {
-                                            <li>
-                                                <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white">@ticket.Title</a>
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
-                                <!-- /.card-body -->
+                                <!-- /.card-tools -->
                             </div>
-                            <!-- /.card -->
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    @foreach (Ticket ticket in Model.Tickets)
+                                    {
+                                        <li>
+                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white">@ticket.Title</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
 
                         <div class="text-center mt-5 mb-3">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">
@@ -175,10 +175,13 @@
                             </button>
                             @if (User.IsInRole("Administrator"))
                             {
-                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning">Edit Project</a>
+                                <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
                             }
                         </div>
                     </div>
+                </div>
+                <div>
+                    <a class="btn btn-primary" asp-action="Dashboard" asp-controller="Home">Back to Dashboard</a>
                 </div>
             </div>
             <!-- /.card-body -->
@@ -238,7 +241,4 @@
 </div>
 <!---/.Roles Modal-->
 
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Dashboard" asp-controller="Home">Back to Dashboard</a>
-</div>
+

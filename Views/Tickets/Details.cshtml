@@ -324,6 +324,10 @@
                     </div>
                 </div>
                 <!--END MAIN ROW-->
+                <div>
+                    <a class="btn btn-primary" asp-action="Dashboard" asp-controller="Home">Back to Dashboard</a>
+                    <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                </div>
             </div>
             <!-- /.card-body -->
         </div>
@@ -333,9 +337,3 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-
-
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Dashboard" asp-controller="Home">Back to Dashboard</a>
-</div>

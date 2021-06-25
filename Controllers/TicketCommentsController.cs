@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -55,6 +56,7 @@ namespace SlickTicket.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("TicketId,Comment")] TicketComment ticketComment)
         {
             if (ModelState.IsValid)
@@ -73,6 +75,7 @@ namespace SlickTicket.Controllers
         }
 
         // GET: TicketComments/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -95,6 +98,7 @@ namespace SlickTicket.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,TicketId,UserId,Comment,Created")] TicketComment ticketComment)
         {
             if (id != ticketComment.Id)
@@ -128,6 +132,7 @@ namespace SlickTicket.Controllers
         }
 
         // GET: TicketComments/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -150,6 +155,7 @@ namespace SlickTicket.Controllers
         // POST: TicketComments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var ticketComment = await _context.TicketComment.FindAsync(id);

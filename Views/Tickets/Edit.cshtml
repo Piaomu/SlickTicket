@@ -27,7 +27,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -59,7 +59,7 @@
 </div>
 
 <div>
-    <a asp-action="MyTickets">Back to My Tickets</a>
+    <a class="btn btn-secondary" asp-action="MyTickets">My Tickets</a>
 </div>
 
 @section Scripts {

@@ -189,7 +189,7 @@
                                     }
                                 </ul>
                             </li>
-                            @if (User.IsInRole("Administrator"))
+                            @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager") || User.IsInRole("Developer"))
                             {
                                 <li class="nav-item">
                                     <a href="#" class="nav-link active">

@@ -14,6 +14,7 @@ using SlickTicket.Services.Interfaces;
 using SlickTicket.Models.ViewModels;
 using System.IO;
 using X.PagedList;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SlickTicket.Controllers
 {
@@ -48,6 +49,7 @@ namespace SlickTicket.Controllers
         }
 
         // GET: Tickets
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Ticket
@@ -62,7 +64,9 @@ namespace SlickTicket.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+
         // GET: Tickets/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
 
@@ -84,6 +88,7 @@ namespace SlickTicket.Controllers
             return View(model);
         }
 
+        [Authorize]
         public async Task<IActionResult> ShowFile(int id)
         {
             TicketAttachment ticketAttachment = await _context.TicketAttachment.FindAsync(id);
@@ -94,7 +99,7 @@ namespace SlickTicket.Controllers
             return File(fileData, $"application/{ext}");
 
         }
-
+        [Authorize(Roles = "Administrator, ProjectManager")]
         [HttpGet]
         public async Task<IActionResult> AssignTicket(int? ticketId)
         {
@@ -112,6 +117,7 @@ namespace SlickTicket.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Administrator, ProjectManager")]
         [HttpPost]
         [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> AssignTicket(AssignDeveloperViewModel viewModel)
@@ -145,6 +151,7 @@ namespace SlickTicket.Controllers
             return RedirectToAction("Details", new { id = viewModel.Ticket.Id });
         }
 
+        [Authorize(Roles = "Administrator, ProjectManager")]
         public async Task<IActionResult> ArchiveToggle(int id)
         {
             var companyId = User.Identity.GetCompanyId().Value;
@@ -164,12 +171,14 @@ namespace SlickTicket.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult SearchIndex(List<Ticket> tickets)
         {
             return View(tickets);
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SearchIndex(string searchString)
         {
@@ -181,6 +190,7 @@ namespace SlickTicket.Controllers
         }
 
         // GET: Tickets/Create
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             //get current user
@@ -208,9 +218,11 @@ namespace SlickTicket.Controllers
             return View();
         }
 
+
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId")] Ticket ticket)
@@ -272,6 +284,7 @@ namespace SlickTicket.Controllers
             return View(ticket);
         }
 
+        [Authorize]
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -294,10 +307,12 @@ namespace SlickTicket.Controllers
             return View(ticket);
         }
 
+
         // POST: Tickets/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Created,Updated,Archived,ArchivedDate,ProjectId,StatusId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,DeveloperUserId")] Ticket ticket)
         {
@@ -398,6 +413,7 @@ namespace SlickTicket.Controllers
             return View(ticket);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> MyTickets(int? page)
         {
@@ -440,6 +456,7 @@ namespace SlickTicket.Controllers
 
         }
 
+        [Authorize(Roles = "Administrator, ProjectManager, Developer")]
         [HttpGet]
         public async Task<IActionResult> CompanyTickets()
         {
@@ -449,7 +466,7 @@ namespace SlickTicket.Controllers
             return View(model);
         }
 
-
+        [Authorize]
         // GET: Tickets/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
