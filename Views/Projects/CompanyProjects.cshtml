@@ -3,149 +3,183 @@
 @inject IBTCompanyInfoService _infoService
 @inject IImageService _imageService
 @inject IBTRolesService _roleService
+@inject IBTProjectService _projectService
 @{
     ViewData["Title"] = "Company Projects";
 }
 
-<!-- Main content -->
-<section class="content">
+<div class="content">
+    <div class="container-fluid">
 
-    <!-- Default box -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Company Projects</h3>
 
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                    <i class="fas fa-times"></i>
-                </button>
+
+
+
+        <h1>All Projects</h1>
+        <h6>Project data as of 03 Jul 2021</h6>
+
+        <p>
+            <a class="btn-sm btn-primary" asp-controller="Projects" asp-action="Create"><i class="fas fa-plus"></i> New Project</a>
+        </p>
+
+
+
+        <div class="card">
+            <div class="card-body">
+                <div class="dataTables_wrapper dt-bootstrap4">
+                    <div class="row">
+                        <div class="col">
+
+
+                            <div id="dtAllProjects_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                                    <div class="col-sm-12">
+                                        <table id="CompanyProjects" class="table table-bordered table-hover dataTables_wrapper dtr-inline dataTable no-footer" role="grid" aria-describedby="dtAllProjects_info">
+                                            <thead>
+                                                <tr role="row">
+                                                    <th class="sorting sorting_asc" tabindex="0" aria-controls="dtAllProjects" rowspan="1" colspan="1" aria-label="
+                                    Project Name
+                                : activate to sort column descending" aria-sort="ascending">
+                                                        Project Name
+                                                    </th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dtAllProjects" rowspan="1" colspan="1" aria-label="
+                                    Due Date
+                                : activate to sort column ascending">
+                                                        Due Date
+                                                    </th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dtAllProjects" rowspan="1" colspan="1" aria-label="
+                                    Progress (% Tickets Completed)
+                                : activate to sort column ascending">
+                                                        Progress (% Tickets Completed)
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+
+
+                                                @foreach (Project project in Model)
+                                                {
+                                                    <tr class="odd">
+                                                        <td class="dtr-control sorting_1" tabindex="0">
+
+                                                            <div>
+
+                                                                <a class="text-white font-weight-bold" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">
+                                                                    @project.Name
+                                                                </a>
+                                                            </div>
+
+                                                            <div class="row">
+                                                                <div class="col-12 col-md-8 col-xl-9 mt-2">
+                                                                    <!--PRIORITY Pill Badges-->
+                                                                    @if (project.ProjectPriority.Name == "Urgent")
+                                                                    {
+                                                                        <span class="badge bg-red">
+                                                                            Priority: @project.ProjectPriority.Name
+                                                                        </span>
+                                                                    }
+                                                                    @if (project.ProjectPriority.Name == "High")
+                                                                    {
+                                                                        <span class="badge bg-orange">
+                                                                            Priority: @project.ProjectPriority.Name
+                                                                        </span>
+                                                                    }
+                                                                    @if (project.ProjectPriority.Name == "Medium")
+                                                                    {
+                                                                        <span class="badge bg-yellow">
+                                                                            Priority: @project.ProjectPriority.Name
+                                                                        </span>
+                                                                    }
+                                                                    @if (project.ProjectPriority.Name == "Low")
+                                                                    {
+                                                                        <span class="bg-secondary badge">
+                                                                            Priority: @project.ProjectPriority.Name
+                                                                        </span>
+                                                                    }
+                                                                    <!--PROJECT MANAGER Pill badges-->
+                                                                    @if ((await _projectService.GetProjectManagerAsync(project.Id)) is null)
+                                                                    {
+                                                                    <span class="badge bg-danger">PM: Unassigned</span>
+                                                                    }
+                                                                    else 
+                                                                    { 
+                                                                    <span class="badge ">PM: @((await _projectService.GetProjectManagerAsync(project.Id)).FullName) </span>
+                                                                    }
+                                                                </div>
+
+                                                                <div class="col mt-2">
+
+                                                                    <a class="btn-xs btn-danger mr-1 text-nowrap" asp-controller="Projects" asp-action="Delete" asp-route-id="@project.Id">
+                                                                        <i class="fas fa-times"></i> Delete
+                                                                    </a>
+                                                                    <a class="btn-xs btn-primary text-nowrap"asp-controller="Projects" asp-action="Edit" asp-route-id="@project.Id">
+                                                                        <i class="fas fa-pencil-alt"></i> Edit
+                                                                    </a>
+
+                                                                </div>
+                                                            </div>
+
+
+                                                        </td>
+
+                                                        <td>
+                                                            <span>@string.Format("{0:MMM dd yyyy}", project.EndDate)</span>
+                                                            <div>
+                                                                @*<small>Days Left: 0</small>*@
+                                                            </div>
+                                                        </td>
+
+                                                        <td class="pt-3">
+                                                            <div class="progress bg-gray-light border border-danger mb-1">
+                                                                <div class="progress-bar bg-danger border border-danger" style="width: 0%">0 %</div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-12 col-md-6">
+                                                                    <small>
+                                                                        Ticket Total:
+                                                                        <span>@project.Tickets.Count</span>
+                                                                    </small>
+                                                                </div>
+
+                                                                <div class="col">
+                                                                    <small>
+                                                                        Assigned Tickets:
+                                                                        <span>@project.Tickets.Where(t => t.DeveloperUser is not null).ToList().Count</span>
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="card-body p-0">
-            <table class="table table-striped projects">
-                <thead>
-                    <tr>
-                        <th style="width: 20%">
-                            Project Name
-                        </th>
-                        <th style="width: 40%">
-                            Team Members
-                        </th>
-                        <th>
-                            Priority
-                        </th>
-                        <th class="text-center">
-                            Tickets
-                        </th>
-                        <th style="width: 20%">
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (Project project in Model)
-                    {
-                    <tr>
-                        <td>
-                            <a class="badge-pill badge-info text-bold" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">
-                                @project.Name
-                            </a>
-                            <br />
-                            <small>
-                                <span class="text-green text-bold">Starts</span>  @string.Format("{0:MMM dd yyyy}",project.StartDate)
-                            </small>
-                            <br />
-                            <small>
-                                <span class="text-red text-bold">Ends</span> @string.Format("{0:MMM dd yyyy}",project.EndDate)
-                            </small>
-                        </td>
-                        <td>
 
-                            <ul class="list-inline">
-                                @foreach (BTUser member in project.Members)
-                                {
-                                <li class="list-inline-item pb-2">
-                                    <img style="height:40px; width:40px;" alt="Avatar" class="table-avatar" src="@_imageService.DecodeImage(member.AvatarFileData, member.AvatarContentType)" data-toggle="popover" data-trigger="hover" data-content="@member.FullName" data-placement="top" data-container="body">
-                                    <div class="badge">@((await _roleService.ListUserRolesAsync(member)).First())</div>
-                                </li>
-                                }
-                            </ul>
-                            
-                        </td>
-                        <td>
-                            @if (project.ProjectPriority.Name == "Urgent")
-                            {
-                                <span class="badge-danger badge-pill">
-                                    @project.ProjectPriority.Name
-                                </span>
-                            }
-                            @if (project.ProjectPriority.Name == "High")
-                            {
-                                <span class="badge-dark badge-pill">
-                                    @project.ProjectPriority.Name
-                                </span>
-                            }
-                            @if (project.ProjectPriority.Name == "Medium")
-                            {
-                                <span class="badge-secondary badge-pill">
-                                    @project.ProjectPriority.Name
-                                </span>
-                            }
-                            @if (project.ProjectPriority.Name == "Low")
-                            {
-                                <span class="badge-light badge-pill">
-                                    @project.ProjectPriority.Name
-                                </span>
-                            }
-                        </td>
-                        <td class="project-state">
-                            <div class="badge badge-success">@project.Tickets.Count</div>
-                        </td>
-                        
-                        <td class="project-actions text-right">
-                                <a class="btn btn-primary btn-sm" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">
-                                    <i class="fas fa-folder">
-                                    </i>
-                                    View
-                                </a>
-                                <a class="btn btn-secondary btn-sm" data-toggle="popover" data-trigger="hover" data-content="@project.Description" data-placement="top" data-container="body">
-                                    <i class="far fa-eye">
-                                    </i>
-                                    Glance
-                                </a>
-                            @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
-                            {
-                                <br />
-                                <a class="btn btn-info btn-sm" asp-controller="Projects" asp-action="Edit" asp-route-id="@project.Id">
-                                    <i class="fas fa-pencil-alt">
-                                    </i>
-                                    Edit
-                                </a>
-                            }
-                            @if (User.IsInRole("Administrator"))
-                            {
-                                <a class="btn btn-danger btn-sm" asp-controller="Projects" asp-action="Delete" asp-route-id="@project.Id">
-                                    <i class="fas fa-trash">
-                                    </i>
-                                    Delete
-                                </a>
-                            }
-                        </td>
-                    </tr>
-                    }
-
-                </tbody>
-            </table>
-        </div>
-        <!-- /.card-body -->
-    </div>
-    <!-- /.card -->
-
-</section>
-<!-- /.content -->
-
-<div>
-    <a class="btn btn-secondary" asp-controller="Home" asp-action="Dashboard">Back to Dashboard</a>
+    </div><!-- /.container-fluid -->
 </div>
+
+@section Scripts {
+    <script>
+    $(document).ready(function () {
+        $('#CompanyProjects').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": true,
+            "ordering": true,
+/*            "info": true,*/
+            "autoWidth": true,
+            "responsive": true,
+        });
+    });
+    </script>
+}
