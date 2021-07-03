@@ -108,10 +108,20 @@
                                                                 </div>
 
                                                                 <div class="col mt-2">
+                                                                    <form asp-action="Delete" asp-route-id="@project.Id" method="post">
 
-                                                                    <a class="btn-xs btn-danger mr-1 text-nowrap" asp-controller="Projects" asp-action="Delete" asp-route-id="@project.Id">
-                                                                        <i class="fas fa-times"></i> Delete
-                                                                    </a>
+                                                                        <span id="deleteSpan_@project.Id"></span>
+                                                                        <a class="btn-xs btn-danger mr-1 text-nowrap" href="#" onclick="confirmDelete('@project.Id', true)">
+                                                                            <i class="fas fa-times"></i> Delete
+                                                                        </a>
+
+                                                                        <span id="confirmDeleteSpan_@project.Id" style="display:none">
+                                                                            <span>Are you sure?</span>
+                                                                            <button type="submit" class="btn btn-danger">Yes</button>
+                                                                            <a href="#" class="btn btn-primary" onclick="confirmDelete('@project.Id', false)">No</a>
+                                                                        </span>
+
+                                                                    </form>
                                                                     <a class="btn-xs btn-primary text-nowrap"asp-controller="Projects" asp-action="Edit" asp-route-id="@project.Id">
                                                                         <i class="fas fa-pencil-alt"></i> Edit
                                                                     </a>
@@ -182,4 +192,6 @@
         });
     });
     </script>
+
+    <script src="~/js/site.js"></script>
 }
