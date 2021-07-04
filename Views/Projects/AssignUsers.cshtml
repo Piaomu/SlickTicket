@@ -41,6 +41,6 @@
         <!--End Hover Rows-->
     </div>
     <div>
-        @Html.ActionLink("Back to List", "Index")
+      <a class="btn btn-secondary" asp-action="Details" asp-route-id="@Model.Project.Id">Back to Project</a>
     </div>
 </div>
