@@ -9,7 +9,7 @@ namespace SlickTicket.Models.ViewModels
     public class ProjectManagerViewModel
     {
         public Project Project { get; set; } = new();
-        public SelectList Users { get; set; } // populate list box
-        public string SelectedUser { get; set; }// receives selected user
+        public SelectList Managers { get; set; } // populate list box
+        public string NewManagerId { get; set; }// receives selected user
     }
 }

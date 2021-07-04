@@ -31,7 +31,35 @@ namespace SlickTicket.Services
             _infoService = bTCompanyInfoService;
             _roleService = bTRoleService;
         }
-        public async Task<bool> IsUserOnProject(string userId, int projectId)
+
+        public async Task<List<Project>> GetAllProjectsByCompanyAsync(int companyId)
+        {
+            List<Project> projects = new();
+            projects = await _context.Project.Include(p => p.ProjectPriority)
+                                             .Include(p => p.Company)
+                                             .Include(p => p.Members)
+                                             .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.OwnerUser)
+                                             .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.DeveloperUser)
+                                             .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketPriority)
+                                             .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketStatus)
+                                             .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.TicketType)
+                                             .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.Attachments)
+                                             .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.History)
+                                             .Include(p => p.Tickets)
+                                                .ThenInclude(t => t.Comments)
+                                             .Where(p => p.CompanyId == companyId)
+
+                                             .ToListAsync();
+            return projects;
+        }
+            public async Task<bool> IsUserOnProject(string userId, int projectId)
         {
             Project project = await _context.Project
                                     .FirstOrDefaultAsync(p => p.Id == projectId);
@@ -234,17 +262,12 @@ namespace SlickTicket.Services
 
         public async Task<BTUser> GetProjectManagerAsync(int projectId)
         {
-            Project project = await _context.Project
-                              .Include(p => p.Members)
-                              .FirstOrDefaultAsync(u => u.Id == projectId);
-            foreach (BTUser member in project?.Members)
+            BTUser projectManager = (await GetProjectMembersByRoleAsync(projectId, "ProjectManager")).FirstOrDefault();
+            if (projectManager is null)
             {
-                if(await _roleService.IsUserInRoleAsync(member, "ProjectManager"))
-                {
-                    return member;
-                }
+                projectManager = (await GetProjectMembersByRoleAsync(projectId, "Administrator")).FirstOrDefault();
             }
-            return null;
+            return projectManager;
         }
 
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)

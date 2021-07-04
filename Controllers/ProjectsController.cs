@@ -23,16 +23,19 @@ namespace SlickTicket.Controllers
         private readonly IBTProjectService _projectService;
         private readonly IBTCompanyInfoService _infoService;
         private readonly UserManager<BTUser> _userManager;
+        private readonly IBTNotificationService _notificationService;
 
         public ProjectsController(ApplicationDbContext context,
                                   IBTProjectService projectService,
                                   IBTCompanyInfoService infoService,
-                                  UserManager<BTUser> userManager)
+                                  UserManager<BTUser> userManager,
+                                  IBTNotificationService notificationService)
         {
             _context = context;
             _projectService = projectService;
             _infoService = infoService;
             _userManager = userManager;
+            _notificationService = notificationService;
         }
 
         // GET: Projects
@@ -74,93 +77,71 @@ namespace SlickTicket.Controllers
             return View(model);
         }
 
-        //GET: Assign Project Manager
         [HttpGet]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> AssignPM(int id)
+        public async Task<IActionResult> AddManager(int id)
         {
-            ProjectManagerViewModel model = new();
-
-            //Get company id
+            //We extended Identity 
             int companyId = User.Identity.GetCompanyId().Value;
+            ProjectManagerViewModel model = new();
+            var project = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
+                                               .FirstOrDefault(p => p.Id == id);
 
-            //Get the project
-            Project project = new();
-            try
-            {
-                List<Project> projects = await _projectService.GetAllProjectsByCompany(companyId);
-                project = projects.FirstOrDefault(p => p.Id == id);
-            }
-            catch(Exception ex)
-            {
-                Debug.WriteLine($"*** ERROR *** - Error getting projects - {ex.Message}");
-                throw;
-            }
-            //Populate VM Project
-            model.Project = project;
-
-            //Multi-Select
-
-            //Get users = pm
-            List<BTUser> users = new();
-
-            try
-            {
-                List<BTUser> pm = await _infoService.GetMembersInRoleAsync(Roles.ProjectManager.ToString(), companyId);
-                users = pm;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"*** ERROR *** - Error getting users not on project - {ex.Message}");
-                throw;
-            }
-
-            //GET all members from the project
-            List<string> members = new();
-
-            try
-            {
-                if(project?.Members != null)
-                {
-                    members = project.Members.Select(m => m.Id).ToList();
-                }
-            }
-            catch(Exception ex)
-            {
-                Debug.WriteLine($"*** ERROR *** - Error getting members on project - {ex.Message}");
-                throw;
-            }
-
-            // Add users to select in VM
-            BTUser currentPM = await _projectService.GetProjectManagerAsync(project.Id);
-            model.Users = new SelectList(users, "Id", "FullName", currentPM?.Id);
-            model.SelectedUser = currentPM?.Id;
-
+            model.Project.Id = id;
+            List<BTUser> users = await _infoService.GetMembersInRoleAsync("ProjectManager", companyId);
+            List<string> members = project.Members.Select(m => m.Id).ToList();
+            model.Managers = new SelectList(users, "Id", "FullName", (await _projectService.GetProjectManagerAsync(project.Id))?.Id);
             return View(model);
         }
 
 
+        //POST: AddManager
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> AssignPM(ProjectManagerViewModel model)
+        public async Task<IActionResult> AddManager(int id, [Bind("ProjectId,NewManagerId,Managers")] ProjectManagerViewModel model)
         {
+            if (User.IsInRole("DemoUser"))
+            {
+                return RedirectToAction("DemoError", "Home");
+            }
             if (ModelState.IsValid)
             {
-                if (model.SelectedUser != null)
+                var oldManager = await _projectService.GetProjectManagerAsync(id);
+                await _projectService.RemoveProjectManagerAsync(model.Project.Id);
+                Project project = await _context.Project.FindAsync(id);
+                await _projectService.AddProjectManagerAsync(model.NewManagerId, model.Project.Id);
+                if (model.NewManagerId != null && model.NewManagerId != oldManager.Id)
                 {
-                    string selectedPM = model.SelectedUser;
+                    var senderId = _userManager.GetUserId(User);
+                    //for each selected user not in original list
+                    Notification notification = new()
+                    {
+                        Created = DateTime.Now,
+                        Message = $"You are now managing project: {project.Name}",
+                        SenderId = senderId,
+                        RecipientId = model.NewManagerId
+                    };
+                    await _notificationService.SaveNotificationAsync(notification);
+                    if (oldManager.Id != _userManager.GetUserId(User))
+                    {
 
-                    await _projectService.RemoveProjectManagerAsync(model.Project.Id);
-                    await _projectService.AddProjectManagerAsync(selectedPM, model.Project.Id);
+                        notification = new()
+                        {
+                            Created = DateTime.Now,
+                            Message = $"You are no longer managing project: {project.Name}",
+                            SenderId = senderId,
+                            RecipientId = oldManager.Id
+                        };
+                        await _notificationService.SaveNotificationAsync(notification);
+                    }
+                    await _projectService.AddUserToProjectAsync(model.NewManagerId, model.Project.Id);
 
-                    return RedirectToAction("Details", "Projects", new { id = model.Project.Id });
                 }
                 else
                 {
-                    // send an error message back
-                    //Use a sweet alert or something that works in the template and return it in the view.
+                    //send an error message to user, that they didnt'  select anyone
                 }
+                return RedirectToAction("Details", "Projects", new { id = model.Project.Id });
             }
             return View(model);
         }
@@ -228,7 +209,7 @@ namespace SlickTicket.Controllers
 
                 _context.Add(project);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("CompanyProjects");
             }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Name", project.CompanyId);
             ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Name", project.ProjectPriorityId);
@@ -376,7 +357,7 @@ namespace SlickTicket.Controllers
             var project = await _context.Project.FindAsync(id);
             _context.Project.Remove(project);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("CompanyProjects");
         }
 
         private bool ProjectExists(int id)

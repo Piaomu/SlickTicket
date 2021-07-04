@@ -8,6 +8,7 @@ namespace SlickTicket.Services.Interfaces
 {
     public interface IBTProjectService
     {
+        public Task<List<Project>> GetAllProjectsByCompanyAsync(int companyId);
         public Task<bool> IsUserOnProject(string userId, int projectId);
 
         public Task<bool> AddUserToProjectAsync(string userId, int projectId);

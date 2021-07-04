@@ -1,0 +1,29 @@
+﻿@model SlickTicket.Models.ViewModels.ProjectManagerViewModel
+@using SlickTicket.Data
+@inject ApplicationDbContext _context
+@{
+    ViewData["Title"] = "Assign Project Manager";
+
+}
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">Assign Manager for @Model.Project.Name</h4>
+
+    </div>
+    <div class="card-body">
+        <form asp-action="AddManager" asp-controller="Projects" method="post">
+            <input type="hidden" value="@Model.Project.Id" asp-for="Project.Id" />
+            <div class="form-group">
+                <label for="">Project Manager</label>
+                <select class="form-control" id="" asp-for="NewManagerId" asp-items="Model.Managers">
+                    <option hidden value="">Select a New Project Manager</option>
+                </select>
+                <span asp-validation-for="NewManagerId" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-success mb-3">Save</button>
+        </form>
+    </div>
+</div>
+    <a asp-action="Details" asp-route-id="@Model.Project.Id" class=" btn btn-outline-secondary">Back to Details</a>
+
