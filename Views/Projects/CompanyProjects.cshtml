@@ -140,8 +140,8 @@
                                                         </td>
 
                                                         <td class="pt-3">
-                                                            <div class="progress bg-gray-light border border-danger mb-1">
-                                                                <div class="progress-bar bg-danger border border-danger" style="width: 0%">0 %</div>
+                                                            <div class="progress bg-gray-light mb-1">
+                                                                <div id="progress-@project.Id" style="width: 50%" class="progress-bar" role="progressbar" aria-valuenow="@project.Tickets.Where(t => t.DeveloperUser is not null).ToList().Count." aria-valuemin="0" aria-valuemax="@project.Tickets.Count"></div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-12 col-md-6">
@@ -152,7 +152,7 @@
                                                                 </div>
 
                                                                 <div class="col">
-                                                                    <small>
+                                                                    <small id="progress-percent-@project.Id">
                                                                         Assigned Tickets:
                                                                         <span>@project.Tickets.Where(t => t.DeveloperUser is not null).ToList().Count</span>
                                                                     </small>
@@ -192,6 +192,37 @@
         });
     });
     </script>
+
+<script>
+    let totalTickets
+    let assignedTickets
+    let interval
+    let progressBar
+</script>
+
+    @foreach(var project in Model)
+    {
+<script>
+
+    totalTickets = @project.Tickets.Count;
+    assignedTickets = @project.Tickets.Where(t => t.DeveloperUser is not null).ToList().Count;
+    interval = (assignedTickets / totalTickets * 100);
+
+    progressBar = document.getElementById("progress-@project.Id");
+    progressBar.style.width = `${interval}%`;
+    if (interval >= 100) {
+        progressBar.classList.toggle("bg-success")
+    } else if (interval > 85) {
+        progressBar.classList.toggle("bg-yellow")
+    } else if (interval > 50 && interval <= 85) {
+        progressBar.classList.toggle("bg-orange")
+    } else {
+        progressBar.classList.toggle("bg-danger")
+    };
+
+
+</script>
+    }
 
     <script src="~/js/site.js"></script>
 }
