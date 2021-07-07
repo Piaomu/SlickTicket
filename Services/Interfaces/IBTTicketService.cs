@@ -15,6 +15,7 @@ namespace SlickTicket.Services.Interfaces
         Task<List<Ticket>> GetAllTicketsByCompanyAsync(int companyId);
 
         Task<List<Ticket>> GetArchivedTicketsByCompanyAsync(int companyId);
+        Task<List<Ticket>> GetUserArchivedTicketsAsync(string userId, int companyId);
 
         Task<List<Ticket>> GetAllTicketsByPriorityAsync(int companyId, string priorityName);
 

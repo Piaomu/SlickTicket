@@ -145,6 +145,22 @@ namespace SlickTicket.Services
             return tickets;
         }
 
+        public async Task<List<Ticket>> GetUserArchivedTicketsAsync(string userId, int companyId)
+        {
+            try
+            {
+                List<Ticket> archivedTickets = await GetArchivedTicketsByCompanyAsync(companyId);
+                List<Ticket> userArchivedTickets = archivedTickets?.Where(t => t.OwnerUser.Id == userId).ToList();
+
+                return userArchivedTickets;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"*** ERROR *** - Error getting user archived tickets - { ex.Message}");
+                throw;
+            }
+        }
+
         public async Task<List<Ticket>> GetAllTicketsByStatusAsync(int companyId, string statusName)
         {
             int status = (await LookupTicketStatusIdAsync(statusName)).Value;
