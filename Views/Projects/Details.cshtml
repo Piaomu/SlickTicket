@@ -13,7 +13,7 @@
 
 
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
+
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
@@ -110,7 +110,6 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <h4>Members</h4>
                                 <div class="post">
                                     <div class="card card-primary">
                                         <div class="card-header">
@@ -181,7 +180,7 @@
 
                         <br />
 
-                        <div class="card card-cyan">
+                        <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">Tickets</h3>
 
@@ -208,18 +207,19 @@
                         <!-- /.card -->
 
                         <div class="text-center mt-5 mb-3">
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newTicketModal">
+                            <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#newTicketModal">
                                 Add Ticket
                             </button>
-                            @if (User.IsInRole("Administrator"))
-                            {
-                                <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-                            }
+
                         </div>
                     </div>
                 </div>
                 <div>
                     <a class="btn btn-primary" asp-action="Dashboard" asp-controller="Home">Back to Dashboard</a>
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit Project</a>
+                    }
                 </div>
             </div>
             <!-- /.card-body -->
@@ -276,7 +276,6 @@
             </form>
         </div>
     </div>
-</div>
 <!---/.Roles Modal-->
 
 
