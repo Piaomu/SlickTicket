@@ -8,12 +8,7 @@
     <h2> Assign Users </h2>
 
     <div class="row">
-        <div class="col-md-4">
-            <div class="panel panel-green margin-bottom-40">
-                <div class="panel-heading">
-                    <h3 class="panel-title"> @Model.Project.Name</h3>
-                </div>
-            </div>
+        <div class="col">
             <p>
                 Name :
                 <span>@Model.Project.Name</span>
@@ -23,15 +18,20 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="@Model.Project.Id">
                 <input type="hidden" asp-for="@Model.Project.Name">
+                <input type="hidden" asp-for="@Model.Project.Description">
                 <div class="col-12">
                     <div class="form-group">
                         <label asp-for="@Model.Users" class="control-label">Assign team members for Project: @Model.Project.Name</label>
-                        <select asp-for="@Model.SelectedUsers" class="form-control" asp-items="@Model.Users" multiple="multiple"></select>
+                        <select asp-for="@Model.SelectedUsers" asp-items="@Model.Users" class="duallistbox" multiple="multiple"></select>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-lg-offset-2 col-lg-10">
-                        <input type="submit" class="btn btn-success" value="Assign Users" />
+                        <input type="submit" class="btn btn-primary" value="Assign Users" />
+                        <a asp-action="Details" asp-route-id="@Model.Project.Id" class="btn btn-secondary">
+                            Back to Project Details
+                        </a>
+                        <a asp-action="Dashboard" asp-controller="Home" class="btn btn-secondary">Dashboard</a>
                     </div>
                 </div>
             </form>
@@ -40,7 +40,12 @@
         </div>
         <!--End Hover Rows-->
     </div>
-    <div>
-      <a class="btn btn-secondary" asp-action="Details" asp-route-id="@Model.Project.Id">Back to Project</a>
-    </div>
 </div>
+
+@section Scripts {
+    <script src="~/plugins/jquery.bootstrap-duallistbox.min.js"></script>
+
+<script>
+    $(".duallistbox").bootstrapDualListbox()
+</script>
+}

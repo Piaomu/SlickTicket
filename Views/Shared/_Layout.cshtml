@@ -19,6 +19,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SlickTicket</title>
     <link rel="icon" type="image/png" href="~/favicon-32x32.png" />
+
+    <!--Bootstrap Dual Listbox-->
+    <link href="~/plugins/bootstrap-duallistbox.min.css" rel="stylesheet" />
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome-->
@@ -123,7 +126,7 @@
                     <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class
-                        with font-awesome or any other icon font library -->
+                            with font-awesome or any other icon font library -->
                             <li class="nav-item menu-open">
                                 <a href="#" class="nav-link active">
                                     <i class="nav-icon fas fa-tachometer-alt text-orange"></i>
@@ -259,68 +262,69 @@
             </div>
         </div>
     </div>
-        <footer class="border-top footer text-muted">
-            <div class="container">
-                &copy; 2021 - SlickTicket -
-            </div>
-        </footer>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - SlickTicket -
+        </div>
+    </footer>
 
 
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <!--jQuery-->
-        <script src="~/plugins/jquery.min.js"></script>
-        <!--jQuery UI 1.11.4-->
-        <script src="~/plugins/jquery-ui.min.js"></script>
-        <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-        <script>
-            $.widget.bridge('uibutton', $.ui.button)
-        </script>
-        <!-- Bootstrap 4 -->
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <!--ChartJS-->
-        @*<script src="~/plugins/Chart.min.js"></script>*@
-        <!--Sparkline-->
-        @*<script src="~/plugins/sparkline.js"></script>*@
-        <!-- JQVMap -->
-        @*<script src="~/plugins/jquery.vmap.min.js"></script>
-            <script src="~/plugins/jquery.vmap.usa.js"></script>*@
-        <!-- jQuery Knob Chart -->
-        @*<script src="~/plugins/jquery.knob.min.js"></script>*@
-        <!--daterangepicker-->
-        @*<script src="~/plugins/moment.min.js"></script>
-            <script src="~/plugins/daterangepicker.js"></script>*@
-        <!-- Tempusdominus Bootstrap 4 -->
-        @*<script src="~/plugins/tempusdominus-bootstrap-4.min.js"></script>*@
-        <!-- Summernote -->
-        @*<script src="~/plugins/summernote-bs4.js"></script>*@
-        <!-- overlayScrollbars -->
-        <script src="~/plugins/jquery.overlayScrollbars.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <!--jQuery-->
+    <script src="~/plugins/jquery.min.js"></script>
+    <!--jQuery UI 1.11.4-->
+    <script src="~/plugins/jquery-ui.min.js"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+    <!-- Bootstrap 4 -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!--ChartJS-->
+    @*<script src="~/plugins/Chart.min.js"></script>*@
+    <!--Sparkline-->
+    @*<script src="~/plugins/sparkline.js"></script>*@
+    <!-- JQVMap -->
+    @*<script src="~/plugins/jquery.vmap.min.js"></script>
+        <script src="~/plugins/jquery.vmap.usa.js"></script>*@
+    <!-- jQuery Knob Chart -->
+    @*<script src="~/plugins/jquery.knob.min.js"></script>*@
+    <!--daterangepicker-->
+    @*<script src="~/plugins/moment.min.js"></script>
+        <script src="~/plugins/daterangepicker.js"></script>*@
+    <!-- Tempusdominus Bootstrap 4 -->
+    @*<script src="~/plugins/tempusdominus-bootstrap-4.min.js"></script>*@
+    <!-- Summernote -->
+    @*<script src="~/plugins/summernote-bs4.js"></script>*@
+    <!-- overlayScrollbars -->
+    <script src="~/plugins/jquery.overlayScrollbars.min.js"></script>
 
-        <!--DataTables-->
-        <script src="~/plugins/jquery.dataTables.min.js"></script>
-        <script src="~/plugins/dataTables.bootstrap4.min.js"></script>
-        <script src="~/plugins/responsive.bootstrap4.min.js"></script>
-        <script src="~/plugins/buttons.bootstrap4.min.js"></script>
-        <!--PAGE PLUGINS-->
-        <!-- jQuery Mapael -->
-        @*<script src="~/plugins/jquery.mousewheel.js"></script>
-            <script src="~/plugins/raphael.min.js"></script>
-            <script src="~/plugins/jquery.mapael.min.js"></script>
-            <script src="~/plugins/usa_states.min.js"></script>*@
-        <!-- AdminLTE App -->
-        <script src="~/plugins/adminlte.js"></script>
-        <!-- AdminLTE for demo purposes -->
-        <script src="~/plugins/demo.js"></script>
-        <!-- AdminLTE dashboard demo -->
-        <script src="~/plugins/dashboard.js"></script>
+    <!--DataTables-->
+    <script src="~/plugins/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/dataTables.bootstrap4.min.js"></script>
+    <script src="~/plugins/responsive.bootstrap4.min.js"></script>
+    <script src="~/plugins/buttons.bootstrap4.min.js"></script>
+    <!--PAGE PLUGINS-->
+    <!-- jQuery Mapael -->
+    @*<script src="~/plugins/jquery.mousewheel.js"></script>
+        <script src="~/plugins/raphael.min.js"></script>
+        <script src="~/plugins/jquery.mapael.min.js"></script>
+        <script src="~/plugins/usa_states.min.js"></script>*@
+    <!-- AdminLTE App -->
+    <script src="~/plugins/adminlte.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/plugins/demo.js"></script>
+    <!-- AdminLTE dashboard demo -->
+    <script src="~/plugins/dashboard.js"></script>
 
-        <script>
-            $(function () {
-                $('[data-toggle="popover"]').popover()
-            })
-        </script>
 
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

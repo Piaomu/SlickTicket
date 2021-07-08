@@ -319,8 +319,7 @@ namespace SlickTicket.Controllers
                 }
                 else
                 {
-                    // send an error message back
-                    //Use a sweet alert or something that works in the template and return it in the view.
+
                 }
             }
             return View(model);
