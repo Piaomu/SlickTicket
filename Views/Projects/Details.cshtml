@@ -134,12 +134,12 @@
                                                         <strong><i class="fas fa-book mr-1"></i> @member.FullName</strong>
                                                         <p class="text-muted">
                                                             @*<span class="users-list-date">@((await _ticketService.GetAllTicketsByRoleAsync("Submitter", member.Id)).Count) Submitted</span>
-                                                            <span class="users-list-date">@((await _ticketService.GetAllDeveloperTicketsByResolvedAsync(member.Id, false)).Count) Open Tickets</span>*@
+                        <span class="users-list-date">@((await _ticketService.GetAllDeveloperTicketsByResolvedAsync(member.Id, false)).Count) Open Tickets</span>*@
                                                         </p>
                                                     </div>
                                                     <div class="col-4">
 
-                                                        <img src="@_imageService.DecodeImage(member.AvatarFileData, member.AvatarContentType)" style="height:60px; width:60px;"class="img-circle img-fluid sm-sq-img" />
+                                                        <img src="@_imageService.DecodeImage(member.AvatarFileData, member.AvatarContentType)" style="height:60px; width:60px;" class="img-circle img-fluid sm-sq-img" />
                                                     </div>
 
                                                 </div>
@@ -148,9 +148,13 @@
                                             @if ((User.IsInRole("ProjectManager") && projectManager.Id == _userManager.GetUserId(User)) || User.IsInRole("Administrator"))
                                             {
                                                 <a asp-action="AssignUsers" asp-route-id="@Model.Project.Id" class="btn btn-block btn-primary">
-                                                    <i class="fas fa-user mr-2">
-                                                    </i>Assign Users
+                                                    <i class="fas fa-users mr-2"></i>
+                                                    Assign Users
                                                 </a>
+                                                <button type="button" class="btn btn-block btn-secondary" data-toggle="modal" data-target="#assignPMModal">
+                                                    <i class="fas fa-user mr-2"></i> 
+                                                    Assign Project Manager
+                                                </button>
                                             }
 
                                         </div>
@@ -165,24 +169,6 @@
                         <h3 class="text-primary"><i class="fas fa-paint-brush"></i> Description</h3>
                         <p class="text-muted">@Model.Project.Description</p>
                         <br>
-                        <div class="text-muted">
-                            <p class="text-lg">
-                                Project Manager
-                                <b class="d-block">@projectManager?.FullName</b>
-                            </p>
-                            @if (User.IsInRole("Administrator"))
-                            {
-                        <div>
-                            <a asp-action="AddManager" asp-route-id="@Model.Project.Id" class="btn btn-light">Assign a Project Manager</a>
-                            <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#assignPMModal">
-                                Assign Project Manager
-                            </button>
-                        </div>
-
-                            }
-                        </div>
-
-                        <br />
 
                         <div class="card card-primary">
                             <div class="card-header">
@@ -301,12 +287,11 @@
                                 </select>
                                 <span asp-validation-for="NewManagerId" class="text-danger"></span>
                             </div>
-                            <button type="submit" class="btn btn-success mb-3">Save</button>
+                            <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
                     </div>
                 </div>
             </div>

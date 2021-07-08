@@ -21,7 +21,7 @@ namespace SlickTicket.Models
         [DisplayName("Project Name")]
         public string Name { get; set; }
 
-        [Required]
+
         [DisplayName("Description")]
         public string Description { get; set; }
 
@@ -30,13 +30,13 @@ namespace SlickTicket.Models
         [DisplayName("Start Date")]
         public DateTimeOffset StartDate { get; set; }
 
-        [Required]
+
         [DataType(DataType.Date)]
 
         [DisplayName("End Date")]
         public DateTimeOffset? EndDate { get; set; }
 
-        [Required]
+
         [DisplayName("Priority")]
         public int? ProjectPriorityId { get; set; }
 
