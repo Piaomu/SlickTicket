@@ -81,7 +81,6 @@ namespace SlickTicket.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AddManager(int id)
         {
-            //We extended Identity 
             int companyId = User.Identity.GetCompanyId().Value;
             ProjectManagerViewModel model = new();
             var project = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
@@ -150,23 +149,22 @@ namespace SlickTicket.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
             ViewData["TicketPriorityId"] = new SelectList(_context.Set<TicketPriority>(), "Id", "Name");
             ViewData["TicketStatusId"] = new SelectList(_context.Set<TicketStatus>(), "Id", "Name");
             ViewData["TicketTypeId"] = new SelectList(_context.Set<TicketType>(), "Id", "Name");
 
             ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Name");
 
-            var companyId = User.Identity.GetCompanyId().Value;
+            int companyId = User.Identity.GetCompanyId().Value;
+            ProjectManagerViewModel model = new();
+            var project = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
+                                               .FirstOrDefault(p => p.Id == id);
 
-            var projects = await _projectService.GetAllProjectsByCompany(companyId);
-
-            var project = projects.FirstOrDefault(m => m.Id == id);
-
-
+            model.Project.Id = (int)id;
+            model.Project = project;
+            List<BTUser> users = await _infoService.GetMembersInRoleAsync("ProjectManager", companyId);
+            List<string> members = project.Members.Select(m => m.Id).ToList();
+            model.Managers = new SelectList(users, "Id", "FullName", (await _projectService.GetProjectManagerAsync(project.Id))?.Id);
             var pm = await _projectService.GetProjectManagerAsync(project.Id);
 
             if (project.Archived == true)
@@ -181,7 +179,7 @@ namespace SlickTicket.Controllers
                 return NotFound();
             }
 
-            return View(project);
+            return View(model);
         }
 
         // GET: Projects/Create
