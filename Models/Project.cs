@@ -16,7 +16,7 @@ namespace SlickTicket.Models
         [DisplayName("Company")]
         public int? CompanyId { get; set; }
 
-        [Required]
+
         [StringLength(50)]
         [DisplayName("Project Name")]
         public string Name { get; set; }

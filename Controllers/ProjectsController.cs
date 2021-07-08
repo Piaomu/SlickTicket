@@ -105,11 +105,13 @@ namespace SlickTicket.Controllers
             }
             if (ModelState.IsValid)
             {
+                Project project = await _context.Project.FindAsync(id);
+                model.Project = project;
+
                 var oldManager = await _projectService.GetProjectManagerAsync(id);
                 await _projectService.RemoveProjectManagerAsync(model.Project.Id);
-                Project project = await _context.Project.FindAsync(id);
                 await _projectService.AddProjectManagerAsync(model.NewManagerId, model.Project.Id);
-                if (model.NewManagerId != null && model.NewManagerId != oldManager.Id)
+                if (model.NewManagerId != null && model.NewManagerId != oldManager?.Id)
                 {
                     var senderId = _userManager.GetUserId(User);
                     //for each selected user not in original list

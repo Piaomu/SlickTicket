@@ -281,6 +281,8 @@
                     <div class="modal-body">
                         <form asp-action="AddManager" asp-controller="Projects" method="post">
                             <input type="hidden" value="@Model.Project.Id" asp-for="@Model.Project.Id" />
+                            <input type="hidden" name="id" value="@Model.Project.Id"/> 
+                            <input type="hidden" value="@Model.Project.Name" asp-for="@Model.Project.Name"/>
                             <div class="form-group">
                                 <select class="form-control" id="" asp-for="NewManagerId" asp-items="Model.Managers">
                                     <option hidden value="">Select a New Project Manager</option>
