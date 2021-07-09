@@ -13,318 +13,349 @@
 
 
 <!-- Content Wrapper. Contains page content -->
-
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6 mb-2">
-                    <h1>Project Details</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="breadcrumb-item active">Details | @Model.Project.Name</li>
-                    </ol>
-                </div>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6 mb-2">
+                <h1>Project Details</h1>
             </div>
-        </div><!-- /.container-fluid -->
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-
-        <!-- Default box -->
-        <div class="card">
-            <div class="card-header">
-                <h1 class="card-title">@Model.Project.Name</h1>
-
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item active">Details | @Model.Project.Name</li>
+                </ol>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
-                        <div class="row">
-                            <div class="col-12 col-sm-4">
-                                <div class="info-box bg-light">
-                                    <div class="info-box-content">
-                                        <span class="info-box-text text-center text-muted">End Date</span>
-                                        <span class="info-box-number text-center text-muted mb-0">@string.Format("{0:MMM dd yyyy}", Model.Project.EndDate)</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-4">
-                                @if (Model.Project?.ProjectPriority?.Name == "Urgent")
-                                {
-                                    <div class="info-box bg-red">
-                                        <div class="info-box-content">
-                                            <span class="info-box-text text-center">Priority</span>
-                                            <span class="info-box-number text-center mb-0">@Model.Project.ProjectPriority.Name</span>
-                                        </div>
-                                    </div>
-                                }
-                                @if (Model.Project?.ProjectPriority?.Name == "High")
-                                {
-                                    <div class="info-box bg-orange">
-                                        <div class="info-box-content">
-                                            <span class="info-box-text text-center">Priority</span>
-                                            <span class="info-box-number text-center mb-0">@Model.Project.ProjectPriority.Name</span>
-                                        </div>
-                                    </div>
-                                }
-                                @if (Model.Project?.ProjectPriority?.Name == "Medium")
-                                {
-                                    <div class="info-box bg-yellow">
-                                        <div class="info-box-content">
-                                            <span class="info-box-text text-center">Priority</span>
-                                            <span class="info-box-number text-center mb-0">@Model.Project.ProjectPriority.Name</span>
-                                        </div>
-                                    </div>
-                                }
-                                @if (Model.Project?.ProjectPriority?.Name == "Low")
-                                {
-                                    <div class="info-box bg-green">
-                                        <div class="info-box-content">
-                                            <span class="info-box-text text-center">Priority</span>
-                                            <span class="info-box-number text-center mb-0">@Model.Project.ProjectPriority.Name</span>
-                                        </div>
-                                    </div>
-                                }
-
-                            </div>
-                            <div class="col-12 col-sm-4">
-                                <div class="info-box bg-light">
-                                    <div class="info-box-content">
-                                        <span class="info-box-text text-center text-muted">Archived</span>
-
-                                        @if (Model.Project.Archived == true)
-                                        {
-                                            <span class="info-box-number text-center text-muted mb-0">Yes</span>
-                                        }
-                                        else 
-                                        {
-                                        <span class="info-box-number text-center text-muted mb-0">No</span>
-                                        }
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="post">
-                                    <div class="card card-primary">
-                                        <div class="card-header">
-                                            <h3 class="card-title">Members</h3>
-                                            <div class="card-tools">
-                                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                                    <i class="fas fa-minus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <!-- /.card-header -->
-                                        <div class="card-body">
-                                            <h5>
-                                                Project Manager:
-                                                @if (projectManager is null)
-                                                {
-                                                    <strong class="badge-danger p-1">Not assigned</strong>
-                                                }
-                                                else
-                                                {
-                                                    @projectManager.FullName
-
-                                                }
-                                            </h5>
-
-                                            @if (User.IsInRole("Admin"))
-                                            {
-                                                <a class="btn btn-warning btn-block" asp-action="AddManager" asp-route-id="@Model.Project.Id">
-                                                    <i class="fas fa-user mr-1">
-                                                    </i>Assign Manager
-                                                </a>
-                                            }
-                                            <hr />
-                                            @foreach (var member in Model.Project.Members)
-                                            {
-                                                <div class="row">
-                                                    <div class="col-8">
-
-                                                        <strong><i class="fas fa-book mr-1"></i> @member.FullName</strong>
-                                                        <p class="text-muted">
-                                                            @*<span class="users-list-date">@((await _ticketService.GetAllTicketsByRoleAsync("Submitter", member.Id)).Count) Submitted</span>
-                            <span class="users-list-date">@((await _ticketService.GetAllDeveloperTicketsByResolvedAsync(member.Id, false)).Count) Open Tickets</span>*@
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-4">
-
-                                                        <img src="@_imageService.DecodeImage(member.AvatarFileData, member.AvatarContentType)" style="height:60px; width:60px;" class="img-circle img-fluid sm-sq-img" />
-                                                    </div>
-
-                                                </div>
-                                                <hr>
-                                            }
-                                            @if ((User.IsInRole("ProjectManager") && projectManager.Id == _userManager.GetUserId(User)) || User.IsInRole("Administrator"))
-                                            {
-                                                <a asp-action="AssignUsers" asp-route-id="@Model.Project.Id" class="btn btn-block btn-primary">
-                                                    <i class="fas fa-users mr-2"></i>
-                                                    Assign Users
-                                                </a>
-                                                <button type="button" class="btn btn-block btn-secondary" data-toggle="modal" data-target="#assignPMModal">
-                                                    <i class="fas fa-user mr-2"></i>
-                                                    Assign Project Manager
-                                                </button>
-                                            }
-
-                                        </div>
-                                        <!-- /.card-body -->
-                                    </div>
-                                        <!-- /.user-block -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
-                        <h3 class="text-primary"><i class="fas fa-paint-brush"></i> Description</h3>
-                        <p class="text-muted">@Model.Project.Description</p>
-                        <br>
-
-                        <!--Tickets Card-->
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">Tickets</h3>
-
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                </div>
-                                <!-- /.card-tools -->
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <ul class="list-unstyled">
-                                    @foreach (Ticket ticket in Model.Project.Tickets)
-                                    {
-                                        <li>
-                                            <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white">@ticket.Title</a>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-
-                        <div class="text-center mt-5 mb-3">
-                            <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#newTicketModal">
-                                Add Ticket
-                            </button>
-                            <a class="btn btn-block btn-secondary" asp-controller="Projects" asp-action="ArchiveToggle" asp-route-id="@Model.Project.Id">Archive Project</a>
-
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <a class="btn btn-primary" asp-action="Dashboard" asp-controller="Home">Back to Dashboard</a>
-                    @if (User.IsInRole("Administrator"))
-                    {
-                        <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@Model.Project.Id">Edit Project</a>
-                    }
-                </div>
-            </div>
-            <!-- /.card-body -->
         </div>
-        <!-- /.card -->
+    </div><!-- /.container-fluid -->
+</section>
 
-    </section>
-    <!-- /.content -->
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">@Model.Project.Name</h1>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+                    <div class="row">
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box bg-light">
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-center text-muted">End Date</span>
+                                    <span class="info-box-number text-center text-muted mb-0">@string.Format("{0:MMM dd yyyy}", Model.Project.EndDate)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            @if (Model.Project?.ProjectPriority?.Name == "Urgent")
+                            {
+                                <div class="info-box bg-red">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center">Priority</span>
+                                        <span class="info-box-number text-center mb-0">@Model.Project.ProjectPriority.Name</span>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.Project?.ProjectPriority?.Name == "High")
+                            {
+                                <div class="info-box bg-orange">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center">Priority</span>
+                                        <span class="info-box-number text-center mb-0">@Model.Project.ProjectPriority.Name</span>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.Project?.ProjectPriority?.Name == "Medium")
+                            {
+                                <div class="info-box bg-yellow">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center">Priority</span>
+                                        <span class="info-box-number text-center mb-0">@Model.Project.ProjectPriority.Name</span>
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.Project?.ProjectPriority?.Name == "Low")
+                            {
+                                <div class="info-box bg-green">
+                                    <div class="info-box-content">
+                                        <span class="info-box-text text-center">Priority</span>
+                                        <span class="info-box-number text-center mb-0">@Model.Project.ProjectPriority.Name</span>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="info-box bg-light">
+                                <div class="info-box-content">
+                                    <span class="info-box-text text-center text-muted">Archived</span>
+
+                                    @if (Model.Project.Archived == true)
+                                    {
+                                        <span class="info-box-number text-center text-muted mb-0">Yes</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="info-box-number text-center text-muted mb-0">No</span>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="post">
+                                <div class="card card-primary">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Members</h3>
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                        <h5>
+                                            Project Manager:
+                                            @if (projectManager is null)
+                                            {
+                                                <strong class="badge-danger p-1">Not assigned</strong>
+                                            }
+                                            else
+                                            {
+                                                @projectManager.FullName
+
+                                            }
+                                        </h5>
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a class="btn btn-warning btn-block" asp-action="AddManager" asp-route-id="@Model.Project.Id">
+                                                <i class="fas fa-user mr-1">
+                                                </i>Assign Manager
+                                            </a>
+                                        }
+                                        <hr />
+                                        @foreach (var member in Model.Project.Members)
+                                        {
+                                            <div class="row">
+                                                <div class="col-8">
+
+                                                    <strong><i class="fas fa-book mr-1"></i> @member.FullName</strong>
+                                                    <p class="text-muted">
+                                                        @*<span class="users-list-date">@((await _ticketService.GetAllTicketsByRoleAsync("Submitter", member.Id)).Count) Submitted</span>
+                                                            <span class="users-list-date">@((await _ticketService.GetAllDeveloperTicketsByResolvedAsync(member.Id, false)).Count) Open Tickets</span>*@
+                                                    </p>
+                                                </div>
+                                                <div class="col-4">
+
+                                                    <img src="@_imageService.DecodeImage(member.AvatarFileData, member.AvatarContentType)" style="height:60px; width:60px;" class="img-circle img-fluid sm-sq-img" />
+                                                </div>
+
+                                            </div>
+                                            <hr>
+                                        }
+                                        @if ((User.IsInRole("ProjectManager") && projectManager.Id == _userManager.GetUserId(User)) || User.IsInRole("Administrator"))
+                                        {
+                                            <a asp-action="AssignUsers" asp-route-id="@Model.Project.Id" class="btn btn-block btn-primary">
+                                                <i class="fas fa-users mr-2"></i>
+                                                Assign Users
+                                            </a>
+                                            <button type="button" class="btn btn-block btn-secondary" data-toggle="modal" data-target="#assignPMModal">
+                                                <i class="fas fa-user mr-2"></i>
+                                                Assign Project Manager
+                                            </button>
+                                        }
+
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.user-block -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+                    <h3 class="text-primary"><i class="fas fa-paint-brush"></i> Description</h3>
+                    <p class="text-muted">@Model.Project.Description</p>
+                    <br>
+
+                    <!--Tickets Card-->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Tickets</h3>
+
+                            <div class="card-tools">
+                                <!--Toggle Archived Tickets Display-->
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary active">
+                                        <input type="radio" name="options" id="option_a1" autocomplete="off" checked> Open
+                                    </label>
+                                    <label class="btn btn-secondary">
+                                        <input type="radio" name="options" id="option_a2" autocomplete="off"> Archived
+                                    </label>
+                                    <label class="btn btn-secondary">
+                                        <input type="radio" name="options" id="option_a3" autocomplete="off"> All
+                                    </label>
+                                </div>
+
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                            <!-- /.card-tools -->
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+
+                            <ul class="list-unstyled" id="openTickets">
+                                @foreach (Ticket ticket in Model.Project.Tickets.Where(t => t.Archived == false))
+                                {
+                                    <li>
+                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white" onclick="ticketToggle()">@ticket.Title</a>
+                                    </li>
+                                }
+                            </ul>
+                            <ul class="list-unstyled" id="archivedTickets">
+                                @foreach (Ticket ticket in Model.Project.Tickets.Where(t => t.Archived == true))
+                                {
+                                    <li>
+                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white" onclick="ticketToggle()">@ticket.Title</a>
+                                    </li>
+                                }
+                            </ul>
+                            <ul class="list-unstyled" id="allTickets">
+                                @foreach (Ticket ticket in Model.Project.Tickets)
+                                {
+                                    <li>
+                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white" onclick="ticketToggle()">@ticket.Title</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+
+                    <div class="text-center mt-5 mb-3">
+                        <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#newTicketModal">
+                            Add Ticket
+                        </button>
+                        <a class="btn btn-block btn-secondary" asp-controller="Projects" asp-action="ArchiveToggle" asp-route-id="@Model.Project.Id">Archive Project</a>
+
+                    </div>
+                </div>
+            </div>
+            <div>
+                <a class="btn btn-primary" asp-action="Dashboard" asp-controller="Home">Back to Dashboard</a>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <a class="btn btn-secondary" asp-action="Edit" asp-route-id="@Model.Project.Id">Edit Project</a>
+                }
+            </div>
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-
 <!--Tickets Modal -->
-    <div class="modal fade" id="newTicketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add a New Ticket</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<div class="modal fade" id="newTicketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add a New Ticket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-controller="Tickets" asp-action="Create" method="post">
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label class="control-label">Title</label>
+                        <input name="Title" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input name="Description" class="form-control" />
+                        <span asp-validation-for="@Model.Project.Description" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <input type="hidden" asp-for="@Model.Project.Id" name="ProjectId" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Ticket Type</label>
+                        <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketStatusId">
+                            <option>Select a Type</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Ticket Priority</label>
+                        <select name="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId">
+                            <option>Choose Priority</option>
+                        </select>
+                    </div>
                 </div>
-                <form asp-controller="Tickets" asp-action="Create" method="post">
-                    <div class="modal-body">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="form-group">
-                            <label class="control-label">Title</label>
-                            <input name="Title" class="form-control" />
-                        </div>
-                        <div class="form-group">
-                            <label>Description</label>
-                            <input name="Description" class="form-control" />
-                            <span asp-validation-for="@Model.Project.Description" class="text-danger"></span>
-                        </div>
-                        <div>
-                            <input type="hidden" asp-for="@Model.Project.Id" name="ProjectId" />
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Ticket Type</label>
-                            <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketStatusId">
-                                <option>Select a Type</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Ticket Priority</label>
-                            <select name="TicketPriorityId" class="form-control" asp-items="ViewBag.TicketPriorityId">
-                                <option>Choose Priority</option>
-                            </select>
-                        </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" value="Create" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!---/.Ticket Modal-->
+<!--Assign PM Modal-->
+<div class="modal fade" id="assignPMModal" tabindex="-1" role="dialog" aria-labelledby="assignPMModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignPMModalLabel2">Assign a Project Manager</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="AddManager" asp-controller="Projects" method="post">
+                    <input type="hidden" value="@Model.Project.Id" asp-for="@Model.Project.Id" />
+                    <input type="hidden" name="id" value="@Model.Project.Id" />
+                    <input type="hidden" value="@Model.Project.Name" asp-for="@Model.Project.Name" />
+                    <div class="form-group">
+                        <select class="form-control" id="" asp-for="NewManagerId" asp-items="Model.Managers">
+                            <option hidden value="">Select a New Project Manager</option>
+                        </select>
+                        <span asp-validation-for="NewManagerId" class="text-danger"></span>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" value="Create" class="btn btn-primary">Create</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
                 </form>
             </div>
-        </div>
-      </div>
-        <!---/.Ticket Modal-->
-        <!--Assign PM Modal-->
-        <div class="modal fade" id="assignPMModal" tabindex="-1" role="dialog" aria-labelledby="assignPMModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="assignPMModalLabel2">Assign a Project Manager</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form asp-action="AddManager" asp-controller="Projects" method="post">
-                            <input type="hidden" value="@Model.Project.Id" asp-for="@Model.Project.Id" />
-                            <input type="hidden" name="id" value="@Model.Project.Id"/> 
-                            <input type="hidden" value="@Model.Project.Name" asp-for="@Model.Project.Name"/>
-                            <div class="form-group">
-                                <select class="form-control" id="" asp-for="NewManagerId" asp-items="Model.Managers">
-                                    <option hidden value="">Select a New Project Manager</option>
-                                </select>
-                                <span asp-validation-for="NewManagerId" class="text-danger"></span>
-                            </div>
-                            <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
+    </div>
+</div>
 
+@section Scripts{
+    <script src="~/js/site.js"></script>
+}
