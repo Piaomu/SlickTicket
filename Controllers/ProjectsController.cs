@@ -77,6 +77,23 @@ namespace SlickTicket.Controllers
             return View(model);
         }
 
+        public async Task<ActionResult> ArchiveToggle(int id)
+        {
+            var companyId = User.Identity.GetCompanyId().Value;
+            Project project = await _context.Project.FindAsync(id);
+
+            if(project.Archived == false)
+            {
+                project.Archived = true;
+            }
+            else
+            {
+                project.Archived = false;
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = project.Id });
+        }
+
         [HttpGet]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AddManager(int id)

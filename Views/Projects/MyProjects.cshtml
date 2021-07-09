@@ -1,70 +1,231 @@
 ﻿@model IEnumerable<SlickTicket.Models.Project>
-
+@using SlickTicket.Services.Interfaces 
+@inject IBTCompanyInfoService _infoService
+@inject IImageService _imageService
+@inject IBTRolesService _roleService
+@inject IBTProjectService _projectService
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "My Projects";
 }
 
-<h1>My Projects</h1>
+<div class="content">
+    <div class="container-fluid">
 
-<div>
-    <hr />
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">@Html.DisplayNameFor(model => model.Name)</h3>
 
-                    <div class="card-tools">
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
 
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default">
-                                    <i class="fas fa-search"></i>
-                                </button>
+
+        <h1>My Projects</h1>
+        <h6>Project data as of @DateTime.Now</h6>
+
+        @if(User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
+        {
+        <p>
+            <a class="btn-sm btn-primary" asp-controller="Projects" asp-action="Create"><i class="fas fa-plus"></i> New Project</a>
+        </p>
+        }
+
+
+
+        <div class="card">
+            <div class="card-body">
+                <div class="dataTables_wrapper dt-bootstrap4">
+                    <div class="row">
+                        <div class="col">
+
+
+                            <div id="dtAllProjects_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                                <div class="col-sm-12">
+                                    <table id="CompanyProjects" class="table table-bordered table-hover dataTables_wrapper dtr-inline dataTable no-footer" role="grid" aria-describedby="dtAllProjects_info">
+                                        <thead>
+                                            <tr role="row">
+                                                <th class="sorting sorting_asc" tabindex="0" aria-controls="dtAllProjects" rowspan="1" colspan="1" aria-label="
+                                    Project Name
+                                : activate to sort column descending" aria-sort="ascending">
+                                                    Project Name
+                                                </th>
+                                                <th class="sorting" tabindex="0" aria-controls="dtAllProjects" rowspan="1" colspan="1" aria-label="
+                                    Due Date
+                                : activate to sort column ascending">
+                                                    Due Date
+                                                </th>
+                                                <th class="sorting" tabindex="0" aria-controls="dtAllProjects" rowspan="1" colspan="1" aria-label="
+                                    Progress (% Tickets Completed)
+                                : activate to sort column ascending">
+                                                    Progress (% Tickets Completed)
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+
+                                            @foreach (Project project in Model)
+                                            {
+                                                <tr class="odd">
+                                                    <td class="dtr-control sorting_1" tabindex="0">
+
+                                                        <div>
+
+                                                            <a class="text-white font-weight-bold" asp-controller="Projects" asp-action="Details" asp-route-id="@project.Id">
+                                                                @project.Name
+                                                            </a>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-12 col-md-8 col-xl-9 mt-2">
+                                                                <!--PRIORITY Pill Badges-->
+                                                                @if (project.ProjectPriority?.Name == "Urgent")
+                                                                {
+                                                                    <span class="badge bg-red">
+                                                                        Priority: @project.ProjectPriority.Name
+                                                                    </span>
+                                                                }
+                                                                @if (project.ProjectPriority?.Name == "High")
+                                                                {
+                                                                    <span class="badge bg-orange">
+                                                                        Priority: @project.ProjectPriority.Name
+                                                                    </span>
+                                                                }
+                                                                @if (project.ProjectPriority?.Name == "Medium")
+                                                                {
+                                                                    <span class="badge bg-yellow">
+                                                                        Priority: @project.ProjectPriority.Name
+                                                                    </span>
+                                                                }
+                                                                @if (project.ProjectPriority?.Name == "Low")
+                                                                {
+                                                                    <span class="bg-secondary badge">
+                                                                        Priority: @project.ProjectPriority.Name
+                                                                    </span>
+                                                                }
+                                                                <!--PROJECT MANAGER Pill badges-->
+                                                                @if ((await _projectService.GetProjectManagerAsync(project.Id)) is null)
+                                                                {
+                                                                    <span class="badge bg-danger">PM: Unassigned</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="badge ">PM: @((await _projectService.GetProjectManagerAsync(project.Id)).FullName) </span>
+                                                                }
+                                                            </div>
+
+                                                            <div class="col mt-2">
+                                                                <form asp-action="Delete" asp-route-id="@project.Id" method="post">
+
+                                                                    <span id="deleteSpan_@project.Id"></span>
+                                                                    <a class="btn-xs btn-danger mr-1 text-nowrap" href="#" onclick="confirmDelete('@project.Id', true)">
+                                                                        <i class="fas fa-times"></i> Delete
+                                                                    </a>
+
+                                                                    <span id="confirmDeleteSpan_@project.Id" style="display:none">
+                                                                        <span>Are you sure?</span>
+                                                                        <button type="submit" class="btn btn-danger">Yes</button>
+                                                                        <a href="#" class="btn btn-primary" onclick="confirmDelete('@project.Id', false)">No</a>
+                                                                    </span>
+
+                                                                </form>
+                                                                <a class="btn-xs btn-primary text-nowrap" asp-controller="Projects" asp-action="Edit" asp-route-id="@project.Id">
+                                                                    <i class="fas fa-pencil-alt"></i> Edit
+                                                                </a>
+
+                                                            </div>
+                                                        </div>
+
+
+                                                    </td>
+
+                                                    <td>
+                                                        <span>@string.Format("{0:MMM dd yyyy}", project.EndDate)</span>
+                                                        <div>
+                                                            @*<small>Days Left: 0</small>*@
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="pt-3">
+                                                        <div class="progress bg-gray-light mb-1">
+                                                            <div id="progress-@project.Id" style="width: 50%" class="progress-bar" role="progressbar" aria-valuenow="@project.Tickets.Where(t => t.DeveloperUser is not null).ToList().Count." aria-valuemin="0" aria-valuemax="@project.Tickets.Count"></div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-12 col-md-6">
+                                                                <small>
+                                                                    Ticket Total:
+                                                                    <span>@project.Tickets.Count</span>
+                                                                </small>
+                                                            </div>
+
+                                                            <div class="col">
+                                                                <small id="progress-percent-@project.Id">
+                                                                    Assigned Tickets:
+                                                                    <span>@project.Tickets.Where(t => t.DeveloperUser is not null).ToList().Count</span>
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
+
+
                     </div>
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-hover text-nowrap">
-                        <thead>
-                            <tr>
-                                <th>@Html.DisplayNameFor(model => model.Name)</th>
-                                <th>@Html.DisplayNameFor(model => model.Description)</th>
-                                <th>@Html.DisplayNameFor(model => model.StartDate)</th>
-                                <th>@Html.DisplayNameFor(model => model.EndDate)</th>
-                                <th>@Html.DisplayNameFor(model => model.Archived)</th>
-                                <th>Members</th>
-                                <th>Project Manager</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var project in Model)
-                            {
-                                <tr>
-                                    <td>@Html.DisplayFor(model => project.Name)</td>
-                                    <td>@Html.DisplayFor(model => project.Description)</td>
-                                    <td>@Html.DisplayFor(model => project.StartDate)</td>
-                                    <td>@Html.DisplayFor(model => project.EndDate)</td>
-                                    <td>@Html.DisplayFor(model => project.Archived)</td>
-                                    @foreach (var member in project.Members)
-                                    {
-                                        <td>@member.FullName</td>
-                                    }
-                                    <td>Project McManager</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.card-body -->
             </div>
         </div>
     </div>
+
+</div><!-- /.container-fluid -->
 </div>
-<div>
-    <a asp-controller="Home" asp-action="Dashboard">Return to Dashboard</a>
-</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#CompanyProjects').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": true,
+                "ordering": true,
+                /*            "info": true,*/
+                "autoWidth": true,
+                "responsive": true,
+            });
+        });
+    </script>
+
+    <script>
+        let totalTickets
+        let assignedTickets
+        let interval
+        let progressBar
+    </script>
+
+    @foreach (var project in Model)
+    {
+        <script>
+
+    totalTickets = @project.Tickets.Count;
+    assignedTickets = @project.Tickets.Where(t => t.DeveloperUser is not null).ToList().Count;
+    interval = (assignedTickets / totalTickets * 100);
+
+    progressBar = document.getElementById("progress-@project.Id");
+    progressBar.style.width = `${interval}%`;
+    if (interval >= 100) {
+        progressBar.classList.toggle("bg-success")
+    } else if (interval > 85) {
+        progressBar.classList.toggle("bg-yellow")
+    } else if (interval > 50 && interval <= 85) {
+        progressBar.classList.toggle("bg-orange")
+    } else {
+        progressBar.classList.toggle("bg-danger")
+    };
+
+
+        </script>
+    }
+
+    <script src="~/js/site.js"></script>
+}

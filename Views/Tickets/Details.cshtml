@@ -13,8 +13,7 @@
     ViewData["Title"] = "Ticket Details";
 }
 
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
+
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
@@ -135,6 +134,12 @@
                         }
                         <!--End Priority/Status/Type-->
 
+                        <!--Begin Timeline-->
+                        <row>
+                            <div class="col-12">
+
+                            </div>
+                        </row>
                         <!--CHAT-->
                         <div class="row">
                             <div class="col-12">
@@ -239,16 +244,16 @@
 
                                 @if (Model.Archived == false)
                                 {
-                                    <a class="btn btn-success mb-1" asp-controller="Tickets" asp-action="ArchiveToggle" asp-route-id="@Model.Id">
+                                    <a class="btn btn-success btn-block mb-1" asp-controller="Tickets" asp-action="ArchiveToggle" asp-route-id="@Model.Id">
                                         Archive Ticket
                                     </a>
-                                    <a class="btn btn-info" asp-controller="Tickets" asp-action="AssignTicket" asp-route-ticketId="@Model.Id">
+                                    <a class="btn btn-info btn-block" asp-controller="Tickets" asp-action="AssignTicket" asp-route-ticketId="@Model.Id">
                                         Assign Developer
                                     </a>
                                 }
                                 else
                                 {
-                                    <a class="btn btn-secondary" asp-controller="Tickets" asp-action="ArchiveToggle" asp-route-id="@Model.Id">
+                                    <a class="btn btn-secondary btn-block" asp-controller="Tickets" asp-action="ArchiveToggle" asp-route-id="@Model.Id">
                                         Revert Archive Status
                                     </a>
                                 }
@@ -335,5 +340,3 @@
 
     </section>
     <!-- /.content -->
-</div>
-<!-- /.content-wrapper -->

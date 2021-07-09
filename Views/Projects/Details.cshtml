@@ -103,7 +103,16 @@
                                 <div class="info-box bg-light">
                                     <div class="info-box-content">
                                         <span class="info-box-text text-center text-muted">Archived</span>
-                                        <span class="info-box-number text-center text-muted mb-0">@ViewData["Archived"]</span>
+
+                                        @if (Model.Project.Archived == true)
+                                        {
+                                            <span class="info-box-number text-center text-muted mb-0">Yes</span>
+                                        }
+                                        else 
+                                        {
+                                        <span class="info-box-number text-center text-muted mb-0">No</span>
+                                        }
+
                                     </div>
                                 </div>
                             </div>
@@ -114,10 +123,28 @@
                                     <div class="card card-primary">
                                         <div class="card-header">
                                             <h3 class="card-title">Members</h3>
+                                            <div class="card-tools">
+                                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            </div>
                                         </div>
+
                                         <!-- /.card-header -->
                                         <div class="card-body">
-                                            <strong>Project Manager: @projectManager?.FullName</strong>
+                                            <h5>
+                                                Project Manager:
+                                                @if (projectManager is null)
+                                                {
+                                                    <strong class="badge-danger p-1">Not assigned</strong>
+                                                }
+                                                else
+                                                {
+                                                    @projectManager.FullName
+
+                                                }
+                                            </h5>
+
                                             @if (User.IsInRole("Admin"))
                                             {
                                                 <a class="btn btn-warning btn-block" asp-action="AddManager" asp-route-id="@Model.Project.Id">
@@ -134,7 +161,7 @@
                                                         <strong><i class="fas fa-book mr-1"></i> @member.FullName</strong>
                                                         <p class="text-muted">
                                                             @*<span class="users-list-date">@((await _ticketService.GetAllTicketsByRoleAsync("Submitter", member.Id)).Count) Submitted</span>
-                        <span class="users-list-date">@((await _ticketService.GetAllDeveloperTicketsByResolvedAsync(member.Id, false)).Count) Open Tickets</span>*@
+                            <span class="users-list-date">@((await _ticketService.GetAllDeveloperTicketsByResolvedAsync(member.Id, false)).Count) Open Tickets</span>*@
                                                         </p>
                                                     </div>
                                                     <div class="col-4">
@@ -152,7 +179,7 @@
                                                     Assign Users
                                                 </a>
                                                 <button type="button" class="btn btn-block btn-secondary" data-toggle="modal" data-target="#assignPMModal">
-                                                    <i class="fas fa-user mr-2"></i> 
+                                                    <i class="fas fa-user mr-2"></i>
                                                     Assign Project Manager
                                                 </button>
                                             }
@@ -170,6 +197,7 @@
                         <p class="text-muted">@Model.Project.Description</p>
                         <br>
 
+                        <!--Tickets Card-->
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3 class="card-title">Tickets</h3>
@@ -200,6 +228,7 @@
                             <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#newTicketModal">
                                 Add Ticket
                             </button>
+                            <a class="btn btn-block btn-secondary" asp-controller="Projects" asp-action="ArchiveToggle" asp-route-id="@Model.Project.Id">Archive Project</a>
 
                         </div>
                     </div>
