@@ -13,30 +13,30 @@ function confirmDelete(uniqueId, isDeleteClicked) {
 }
 
 function ticketToggle() {
-    let openToggle = document.getElementById('option_a1');
-    let archiveToggle = document.getElementById('option_a2');
-    let allToggle = document.getElementById('option_a3');
+    let openToggle = document.getElementById('openToggle');
+    let archiveToggle = document.getElementById('archiveToggle');
+    let allToggle = document.getElementById('allToggle');
 
     let openTickets = document.getElementById('openTickets');
     let archivedTickets = document.getElementById('archivedTickets');
     let allTickets = document.getElementById('allTickets');
 
     if (openToggle.classList.contains('active')) {
-        $(openTickets).show();
-        $(archivedTickets).hide();
-        $(allTickets).hide();
+        $("#openTickets").show();
+        $("#archivedTickets").hide();
+        $("#allTickets").hide();
     }
 
     if (archiveToggle.classList.contains('active')) {
-        $(openTickets).hide();
-        $(archivedTickets).show();
-        $(allTickets).hide();
+        $("#openTickets").hide();
+        $("#archivedTickets").show();
+        $("#allTickets").hide();
     }
 
     if (allToggle.classList.contains('active')) {
-        $(openTickets).hide();
-        $(archivedTickets).hide();
-        $(allTickets).show();
+        $("#openTickets").hide();
+        $("#archivedTickets").hide();
+        $("#allTickets").show();
     }
 }
 

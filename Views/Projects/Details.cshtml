@@ -204,14 +204,14 @@
                             <div class="card-tools">
                                 <!--Toggle Archived Tickets Display-->
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-secondary active">
-                                        <input type="radio" name="options" id="option_a1" autocomplete="off" checked> Open
+                                    <label class="btn btn-secondary active" id="openToggle">
+                                        <input type="radio" name="options" autocomplete="off" checked onclick="ticketToggle();"> Open
                                     </label>
-                                    <label class="btn btn-secondary">
-                                        <input type="radio" name="options" id="option_a2" autocomplete="off"> Archived
+                                    <label class="btn btn-secondary" id="archiveToggle">
+                                        <input type="radio" name="options" autocomplete="off" onclick="ticketToggle();"> Archived
                                     </label>
-                                    <label class="btn btn-secondary">
-                                        <input type="radio" name="options" id="option_a3" autocomplete="off"> All
+                                    <label class="btn btn-secondary" id="allToggle">
+                                        <input type="radio" name="options" autocomplete="off" onclick="ticketToggle();"> All
                                     </label>
                                 </div>
 
@@ -224,11 +224,11 @@
                         <!-- /.card-header -->
                         <div class="card-body">
 
-                            <ul class="list-unstyled" id="openTickets">
+                            @*<ul class="list-unstyled" id="openTickets">
                                 @foreach (Ticket ticket in Model.Project.Tickets.Where(t => t.Archived == false))
                                 {
                                     <li>
-                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white" onclick="ticketToggle()">@ticket.Title</a>
+                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white">@ticket.Title</a>
                                     </li>
                                 }
                             </ul>
@@ -236,15 +236,15 @@
                                 @foreach (Ticket ticket in Model.Project.Tickets.Where(t => t.Archived == true))
                                 {
                                     <li>
-                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white" onclick="ticketToggle()">@ticket.Title</a>
+                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white">@ticket.Title</a>
                                     </li>
                                 }
-                            </ul>
+                            </ul>*@
                             <ul class="list-unstyled" id="allTickets">
                                 @foreach (Ticket ticket in Model.Project.Tickets)
                                 {
                                     <li>
-                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white" onclick="ticketToggle()">@ticket.Title</a>
+                                        <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white">@ticket.Title</a>
                                     </li>
                                 }
                             </ul>
@@ -355,7 +355,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts{
-    <script src="~/js/site.js"></script>
-}
