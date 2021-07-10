@@ -224,7 +224,7 @@
                         <!-- /.card-header -->
                         <div class="card-body">
 
-                            @*<ul class="list-unstyled" id="openTickets">
+                            <ul class="list-unstyled" id="openTickets">
                                 @foreach (Ticket ticket in Model.Project.Tickets.Where(t => t.Archived == false))
                                 {
                                     <li>
@@ -239,7 +239,7 @@
                                         <a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id" class="text-sm text-white" onclick="ticketToggle()">@ticket.Title</a>
                                     </li>
                                 }
-                            </ul>*@
+                            </ul>
                             <ul class="list-unstyled" id="allTickets">
                                 @foreach (Ticket ticket in Model.Project.Tickets)
                                 {
@@ -305,7 +305,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label">Ticket Type</label>
-                        <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketStatusId">
+                        <select name="TicketTypeId" class="form-control" asp-items="ViewBag.TicketTypeId">
                             <option>Select a Type</option>
                         </select>
                     </div>
