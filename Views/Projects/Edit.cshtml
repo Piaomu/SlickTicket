@@ -4,7 +4,67 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+
+<div class="container-fluid">
+    <h1>Edit @Model.Name</h1>
+
+
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Edit Project</h3>
+        </div>
+        <div class="card-body">
+
+            <form asp-action="Edit">
+                <div class="row">
+                    <div class="col-7">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CompanyId" />
+                        <input type="hidden" asp-for="ImageFileName" />
+                        <input type="hidden" asp-for="ImageContentType" />
+                        <input type="hidden" asp-for="Archived" />
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="form-group">
+                            <label asp-for="StartDate" class="control-label"></label>
+                            <input asp-for="StartDate" class="form-control" />
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="EndDate" class="control-label"></label>
+                            <input asp-for="EndDate" class="form-control" />
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ProjectPriorityId" class="control-label"></label>
+                            <select asp-for="ProjectPriorityId" class="form-control" asp-items="ViewBag.ProjectPriorityId"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <a class="btn btn-secondary" asp-controller="Home" asp-action="Dashboard">Return to Dashboard</a>
+                </div>
+            </form>
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+</div>
+
+
+@*<h1>Edit</h1>
 
 <h4>Project</h4>
 <hr />
@@ -51,7 +111,7 @@
 
 <div>
     <a class="btn btn-secondary" asp-controller="Home" asp-action="Dashboard">Return to Dashboard</a>
-</div>
+</div>*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

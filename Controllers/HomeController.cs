@@ -142,6 +142,21 @@ namespace SlickTicket.Controllers
             return Json(chartData);
         }
 
+        //public IActionResult MemberProfile()
+        //{
+
+        //    MemberProfileViewModel model = new()
+        //    {
+        //        Member = _userManager.FindByNameAsync(_),
+        //        Projects = ,
+        //        Tickets = ,
+        //        Comments = ,
+        //    };
+
+
+
+        //    return View(model);
+        //}
         public IActionResult Landing()
         {
             return View();

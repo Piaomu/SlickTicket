@@ -282,7 +282,7 @@ namespace SlickTicket.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("CompanyProjects");
             }
             ViewData["CompanyId"] = new SelectList(_context.Company, "Id", "Id", project.CompanyId);
             ViewData["ProjectPriorityId"] = new SelectList(_context.Set<ProjectPriority>(), "Id", "Id", project.ProjectPriorityId);
