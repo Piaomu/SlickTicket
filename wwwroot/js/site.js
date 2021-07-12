@@ -12,31 +12,41 @@ function confirmDelete(uniqueId, isDeleteClicked) {
     }
 }
 
+console.log("loaded")
+
+let openToggle = document.getElementById('openToggle');
+let archiveToggle = document.getElementById('archiveToggle');
+let allToggle = document.getElementById('allToggle');
+
+ticketToggle();
+
+openToggle.addEventListener('click', () => {
+    $("#openTickets").show();
+    $("#archivedTickets").hide();
+    $("#allTickets").hide();
+    console.log("I'm working open Tickets");
+})
+
+archiveToggle.addEventListener('click', () => {
+    $("#openTickets").hide();
+    $("#archivedTickets").show();
+    $("#allTickets").hide();
+    console.log("I'm working archived tx");
+})
+
+allToggle.addEventListener('click', () => {
+    $("#openTickets").hide();
+    $("#archivedTickets").hide();
+    $("#allTickets").show();
+    console.log("I'm working All Tickets");
+})
+
 function ticketToggle() {
-    let openToggle = document.getElementById('openToggle');
-    let archiveToggle = document.getElementById('archiveToggle');
-    let allToggle = document.getElementById('allToggle');
 
-    let openTickets = document.getElementById('openTickets');
-    let archivedTickets = document.getElementById('archivedTickets');
-    let allTickets = document.getElementById('allTickets');
+    $("#openTickets").show();
+    $("#archivedTickets").hide();
+    $("#allTickets").hide();
+    console.log("I'm working open Tickets");
 
-    if (openToggle.classList.contains('active')) {
-        $("#openTickets").show();
-        $("#archivedTickets").hide();
-        $("#allTickets").hide();
-    }
-
-    if (archiveToggle.classList.contains('active')) {
-        $("#openTickets").hide();
-        $("#archivedTickets").show();
-        $("#allTickets").hide();
-    }
-
-    if (allToggle.classList.contains('active')) {
-        $("#openTickets").hide();
-        $("#archivedTickets").hide();
-        $("#allTickets").show();
-    }
 }
 
