@@ -66,12 +66,20 @@
                                     <td class="text-red">Unassigned</td>
                                 }
 
-                                <td>
-                                    <a class="text-white" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">Details</a> |
-                                    <a class="text-white" asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">Edit</a> |
-                                    <a class="text-white" asp-controller="Tickets" asp-action="AssignTicket" asp-route-ticketId="@ticket.Id">Assign</a> |
-                                    <a class="text-white" asp-controller="Tickets" asp-action="Delete" asp-route-id="@ticket.Id">Delete</a>
-                                </td>
+                            <td>
+                                <a class="text-white" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">Details</a> |
+                                <a class="text-white" asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">Edit</a> |
+                                @if (ticket.DeveloperUser is null)
+                                {
+                                    <a class="text-red" asp-controller="Tickets" asp-action="AssignTicket" asp-route-ticketId="@ticket.Id">Assign</a>
+                                }
+                                else
+                                {
+                                    <a class="text-white" asp-controller="Tickets" asp-action="AssignTicket" asp-route-ticketId="@ticket.Id">Assign</a>
+                                }
+                                |
+                                <a class="text-white" asp-controller="Tickets" asp-action="Delete" asp-route-id="@ticket.Id">Delete</a>
+                            </td>
                                 @if (User.IsInRole("Administrator") || ((await _projectService.GetProjectManagerAsync(ticket.Project.Id)) == (await _userManager.GetUserAsync(User))))
                                 {
 
