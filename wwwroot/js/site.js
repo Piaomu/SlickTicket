@@ -24,21 +24,18 @@ openToggle.addEventListener('click', () => {
     $("#openTickets").show();
     $("#archivedTickets").hide();
     $("#allTickets").hide();
-    console.log("I'm working open Tickets");
 })
 
 archiveToggle.addEventListener('click', () => {
     $("#openTickets").hide();
     $("#archivedTickets").show();
     $("#allTickets").hide();
-    console.log("I'm working archived tx");
 })
 
 allToggle.addEventListener('click', () => {
     $("#openTickets").hide();
     $("#archivedTickets").hide();
     $("#allTickets").show();
-    console.log("I'm working All Tickets");
 })
 
 function ticketToggle() {
@@ -46,7 +43,5 @@ function ticketToggle() {
     $("#openTickets").show();
     $("#archivedTickets").hide();
     $("#allTickets").hide();
-    console.log("I'm working open Tickets");
-
 }
 
