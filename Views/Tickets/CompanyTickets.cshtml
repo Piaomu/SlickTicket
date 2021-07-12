@@ -31,21 +31,13 @@
                         <thead>
                             <tr>
                                 <th>Title</th>
-                                <th>Description</th>
-                                <th>Created</th>
-                                <th>CreatedOrder</th>
                                 <th>Priority</th>
                                 <th>PriorityId</th>
-                                <th>Type</th>
-                                <th>TypeId</th>
                                 <th>Status</th>
                                 <th>StatusId</th>
-                                <th>Assign</th>
-                                @if(User.IsInRole("Administrator") || User.IsInRole("ProjectManager")) {
-                                <th>Edit</th>
-                                }
-                                <th>See Ticket</th>
-                                <th>Project Manager</th>
+                                <th>Submitter</th>
+                                <th>Developer</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -53,26 +45,37 @@
                             {
                             <tr>
                                 <td>@ticket.Title</td>
-                                <td>@ticket.Description</td>
-                                <td>@string.Format("{0:MMM dd yyyy}", ticket.Created) </td>
-                                <td>@(ticket.Created.ToUnixTimeSeconds()) </td>
                                 <td>@ticket.TicketPriority.Name</td>
                                 <td>@ticket.TicketPriority.Id</td>
-                                <td>@ticket.TicketType.Name</td>
-                                <td>@ticket.TicketType.Id</td>
                                 <td>@ticket.TicketStatus.Name</td>
                                 <td>@ticket.TicketStatus.Id</td>
-                                <td>
-                                    <a class="btn btn-light text-dark" asp-controller="Tickets" asp-action="AssignTicket" asp-route-ticketId="@ticket.Id">Assign</a>
-                                </td>
-                                @if(User.IsInRole("Administrator") || ((await _projectService.GetProjectManagerAsync(ticket.Project.Id)) == (await _userManager.GetUserAsync(User)))) 
-                                { 
-                                <td>
-                                    <a class="btn btn-info text-dark" asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">Edit</a>
-                                </td>
+                                @if (ticket.OwnerUser is not null)
+                                {
+                                    <td>@ticket.OwnerUser?.FullName</td>
                                 }
-                                <td><a class="btn btn-success text-dark"  asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">Details</a></td>
-                                <td>@((await _projectService.GetProjectManagerAsync(ticket.Project.Id))?.FullName)</td>
+                                else
+                                {
+                                    <td class="text-red">Unassigned</td>
+                                }
+                                @if (ticket.DeveloperUser is not null)
+                                {
+                                    <td>@ticket.DeveloperUser?.FullName</td>
+                                }
+                                else
+                                {
+                                    <td class="text-red">Unassigned</td>
+                                }
+
+                                <td>
+                                    <a class="text-white" asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">Details</a> |
+                                    <a class="text-white" asp-controller="Tickets" asp-action="Edit" asp-route-id="@ticket.Id">Edit</a> |
+                                    <a class="text-white" asp-controller="Tickets" asp-action="AssignTicket" asp-route-ticketId="@ticket.Id">Assign</a> |
+                                    <a class="text-white" asp-controller="Tickets" asp-action="Delete" asp-route-id="@ticket.Id">Delete</a>
+                                </td>
+                                @if (User.IsInRole("Administrator") || ((await _projectService.GetProjectManagerAsync(ticket.Project.Id)) == (await _userManager.GetUserAsync(User))))
+                                {
+
+                                }
                             </tr>
                             }
 
@@ -80,22 +83,13 @@
                         <tfoot>
                             <tr>
                                 <th>Title</th>
-                                <th>Description</th>
-                                <th>Created</th>
-                                <th>CreatedOrdered</th>
                                 <th>Priority</th>
                                 <th>PriorityId</th>
-                                <th>Type</th>
-                                <th>TypeId</th>
                                 <th>Status</th>
                                 <th>StatusId</th>
-                                <th>Assign</th>
-                                @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
-                                {
-                                    <th>Edit</th>
-                                }
-                                <th>See Ticket</th>
-                                <th>Project Manager</th>
+                                <th>Submitter</th>
+                                <th>Developer</th>
+                                <th>Actions</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -121,11 +115,9 @@
 /*            "info": true,*/
             "autoWidth": false,
             columnDefs: [
-                { targets: [3, 5, 7, 9], visible: false },
-                {"orderData": 3, targets: [2]},
-                { "orderData": 5, targets: [4]},
-                { "orderData": 7, targets: [6]},
-                { "orderData": 9, targets: [8]},
+                { targets: [2, 4], visible: false },
+                {"orderData": 2, targets: [1]},
+                { "orderData": 4, targets: [3]},
                 { targets: '_all', visible: true }
             ]
 /*            "responsive": true,*/
