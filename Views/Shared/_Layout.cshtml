@@ -170,17 +170,6 @@
                                             <p>My Tickets</p>
                                         </a>
                                     </li>
-                                    @if (User.IsInRole("Administrator") || User.IsInRole("ProjectManager"))
-                                    {
-                                        <li class="nav-item">
-                                            <a asp-controller="Tickets" asp-action="AssignTicket" class="nav-link">
-                                                <i class="nav-icon far fa-plus-square text-purple"></i>
-                                                <p>
-                                                    Assign Tickets
-                                                </p>
-                                            </a>
-                                        </li>
-                                    }
                                     @if (!User.IsInRole("DemoUser"))
                                     {
                                         <li class="nav-item">
@@ -232,7 +221,6 @@
                                         <i class="nav-icon far fa-plus-square text-purple"></i>
                                         <p>
                                             NEW Project
-                                            <span class="right badge badge-danger">New</span>
                                         </p>
                                     </a>
                                 </li>
@@ -243,7 +231,6 @@
                                     <i class="nav-icon far fa-plus-square text-cyan"></i>
                                     <p>
                                         NEW Ticket
-                                        <span class="right badge badge-danger">New</span>
                                     </p>
                                 </a>
                             </li>
