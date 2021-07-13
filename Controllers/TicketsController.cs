@@ -157,7 +157,7 @@ namespace SlickTicket.Controllers
             var companyId = User.Identity.GetCompanyId().Value;
             Ticket ticket = (await _ticketService.GetAllTicketsByCompanyAsync(companyId)).FirstOrDefault(t => t.Id == id);
 
-            if(ticket.Archived == false)
+            if (ticket.Archived == false)
             {
                 ticket.Archived = true;
             }
@@ -166,6 +166,15 @@ namespace SlickTicket.Controllers
                 ticket.Archived = false;
             }
             await _context.SaveChangesAsync();
+            if (ticket.Archived == true)
+            {
+                TempData["StatusMessage"] = $"{ticket.Title} was successfully archived";
+            }
+            else
+            {
+                TempData["StatusMessage"] = $"{ticket.Title} was successfully re-opened";
+            }
+                
             return RedirectToAction("Details",  new { id = ticket.Id });
 
         }
