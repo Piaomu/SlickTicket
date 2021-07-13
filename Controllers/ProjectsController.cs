@@ -91,6 +91,14 @@ namespace SlickTicket.Controllers
                 project.Archived = false;
             }
             await _context.SaveChangesAsync();
+            if(project.Archived == true) 
+            {
+            TempData["StatusMessage"] = $"{project.Name} was successfully archived";
+            }
+            else
+            {
+            TempData["StatusMessage"] = $"{project.Name} was successfully re-opened";
+            }
             return RedirectToAction("Details", new { id = project.Id });
         }
 
