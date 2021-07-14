@@ -172,7 +172,7 @@
                                             </div>
                                             <hr>
                                         }
-                                        @if ((User.IsInRole("ProjectManager") && projectManager.Id == _userManager.GetUserId(User)) || User.IsInRole("Administrator"))
+                                        @if ((User.IsInRole("ProjectManager") && projectManager?.Id == _userManager.GetUserId(User)) || User.IsInRole("Administrator"))
                                         {
                                             <a asp-action="AssignUsers" asp-route-id="@Model.Project.Id" class="btn btn-block btn-primary">
                                                 <i class="fas fa-users mr-2"></i>
