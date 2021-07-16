@@ -27,8 +27,6 @@ namespace SlickTicket.Models
 
         [NotMapped]
         [DataType(DataType.Upload)]
-        //[MaxFileSize(1024 * 1024)]
-        //[AllowedExtensions(new string[] { ".jpg", ".png" })]
         public IFormFile AvatarFormFile { get; set; }
         public string AvatarFileNAme { get; set; }
         public byte[] AvatarFileData { get; set; }
